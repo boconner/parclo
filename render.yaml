@@ -6,6 +6,10 @@ databases:
 services:
   - type: web
     name: parclo-api
+    # Free is fine for demos and trials, but it sleeps after 15 minutes idle
+    # (~50s cold start) and the free database expires after 30 days. Move
+    # customer deployments to `starter` before handover.
+    plan: free
     runtime: node
     rootDir: backend
     buildCommand: npm install && ./node_modules/.bin/prisma generate && npm run typecheck
