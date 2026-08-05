@@ -20,6 +20,16 @@ and the nightly stale-store cron. The API's start command runs
 `prisma db push`, which creates the full schema on first boot — no manual
 migration step.
 
+`render.yaml` puts the API on the **free** plan, which suits demos and trials
+but sleeps after 15 minutes idle (~50s cold start), gives no shell or one-off
+job access, and its database is deleted after 30 days. Upgrade that service to
+Starter before handing a deployment to a paying customer.
+
+The API and frontend come up as `parclo-api` / `parclo-frontend` on
+`onrender.com` unless you renamed the services, so `VITE_API_URL` is
+predictable — but check the API's real URL on its service page and correct the
+frontend env var if it differs, or the app loads and every request fails.
+
 ## 2. Clerk
 
 1. Create a **new Clerk application** at dashboard.clerk.com (one per customer;
@@ -72,6 +82,23 @@ Frontend:
   3. **Stores** — CSV import (regions and chains are created on the fly).
   4. **Reps** — email invitations via Clerk; link each user to a Rep record.
   5. **QR codes** — print per-store cards (and chain cards for HQ buyers).
+
+## 4b. Demo instances only — loading sample data
+
+Skip this for real customers. For a demo instance you *do* want the seed, and
+on Render's free plan there is no web shell or one-off job to run it in, so run
+it from a workstation against the database's external URL:
+
+```powershell
+# Render → parclo-db → "External Database URL" (copy)
+cd backend
+$env:DATABASE_URL="<external database url>"
+npm run seed
+```
+
+`dotenv` does not override an already-set variable, so the shell value wins over
+`backend/.env`. The seed is idempotent and its dates shift to the current date
+on every run, so re-running it refreshes a stale demo.
 
 ## 5. Domain
 
