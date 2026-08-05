@@ -409,6 +409,23 @@ model RestockRequest {
   @@index([status])
 }
 
+// Singleton (id "default") holding the deploying brand's identity. Everything
+// customer-visible — app chrome, portal pages, emails, report headers — reads
+// from here, so a new customer is a settings row, not a code change.
+model OrgSettings {
+  id           String   @id @default("default")
+  brandName    String   @default("Parclo")
+  logoUrl      String?
+  // Hex accent color used across the app UI and email buttons.
+  primaryColor String   @default("#724fac")
+  // From-address for outbound email (must be verified with the email provider).
+  fromEmail    String?
+  supportEmail String?
+  // Public URL of this deployment, used for links in emails.
+  appUrl       String?
+  updatedAt    DateTime @updatedAt
+}
+
 model InventorySettings {
   id               String   @id @default("default")
   reorderLeadWeeks Int      @default(12)

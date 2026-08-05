@@ -5,7 +5,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const SRC = path.join(__dirname, '../public/contento.png')
+const SRC = path.join(__dirname, '../public/logo.png')
 const OUT = path.join(__dirname, '../public')
 
 const ASPECT = 2560 / 991   // source logo aspect ratio

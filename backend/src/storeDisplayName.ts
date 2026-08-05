@@ -8,7 +8,7 @@ function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-/** Strip the chain prefix ("GG-", "Goody Goody - ") and a trailing "Store" from a name. */
+/** Strip the chain prefix ("VV-", "Vine Valley - ") and a trailing "Store" from a name. */
 export function cleanStoreName(name: string, chainName: string | null): string {
   let s = name.trim()
 

@@ -151,6 +151,15 @@ export interface StockSyncLogEntry extends StockSyncInfo {
   previousOnShelf: number
 }
 
+export interface OrgSettings {
+  brandName:    string
+  logoUrl:      string | null
+  primaryColor: string
+  fromEmail:    string | null
+  supportEmail: string | null
+  appUrl:       string | null
+}
+
 export interface Product {
   id:           string
   name:         string
@@ -253,6 +262,12 @@ export const api = {
     chainId: string | null; storeNumber: string | null; repId: string | null; regionSlug: string; latitude: number; longitude: number
   }>) =>
     request<DashboardStore>(`/api/stores/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+
+  // Org settings (branding)
+  getOrgSettings: () => request<OrgSettings>('/api/settings'),
+
+  updateOrgSettings: (body: Partial<OrgSettings>) =>
+    request<OrgSettings>('/api/settings', { method: 'PATCH', body: JSON.stringify(body) }),
 
   // Products
   getProducts: (includeArchived = false) =>

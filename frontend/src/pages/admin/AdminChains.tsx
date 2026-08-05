@@ -324,7 +324,7 @@ function AddChainModal({
             type="text"
             value={name}
             onChange={e => { setName(e.target.value); setError('') }}
-            placeholder="e.g. Total Wine, Goody Goody…"
+            placeholder="e.g. Total Wine…"
             className={clsx(
               'w-full px-3 py-2 text-sm bg-white border rounded-lg outline-none transition-all placeholder:text-gray-400',
               'focus:border-accent focus:ring-2 focus:ring-accent/10',

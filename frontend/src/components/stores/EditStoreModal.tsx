@@ -138,7 +138,7 @@ export function EditStoreModal({ store, open, onClose, onSave }: EditStoreModalP
             <Field
               label="Chain Store Number"
               id={`${uid}-storeNumber`}
-              hint="The chain's own store ID, used to match live inventory (e.g. Goody Goody store 15)."
+              hint="The chain's own store ID, used to match live inventory (e.g. store #15)."
             >
               <Input
                 id={`${uid}-storeNumber`}

@@ -169,7 +169,7 @@ export default function StoreDetails() {
 
   // Both rep visits and automated stock syncs are observations of the same
   // thing — what's on the shelf — so the trend uses both. Using visits alone
-  // left synced stores (Goody Goody) drawing a few stale points while a far
+  // left synced stores drawing a few stale points while a far
   // denser series sat unused in the Stock Sync Log below.
   const trend = useMemo(() => buildInventoryTrend([
     ...visits.map(v => ({ date: v.date, onShelf: v.onShelf })),
@@ -675,7 +675,7 @@ export default function StoreDetails() {
                             ) : (
                               <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-600">In stock</span>
                             )}
-                            <span className="text-xs text-gray-500">{store.chainName ?? 'Goody Goody'}</span>
+                            <span className="text-xs text-gray-500">{store.chainName ?? 'Retailer'}</span>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
                             <span className="text-[10px] text-gray-400">{fmtShort(s.syncedAt)}</span>
@@ -944,7 +944,7 @@ export default function StoreDetails() {
                   <div className="rounded-lg bg-amber-50 border border-amber-100 p-3">
                     <p className="text-[11px] text-amber-800 mb-2">
                       All history stays on record. The store drops out of store lists,
-                      dashboard metrics, the public locator, the Goody Goody sync and the
+                      dashboard metrics, the public locator, the retail stock sync and the
                       alert scan, and its QR code stops working. Reversible at any time.
                     </p>
                     <div className="flex items-center gap-2">

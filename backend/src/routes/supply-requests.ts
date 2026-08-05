@@ -3,6 +3,7 @@ import { getAuth } from '@clerk/express'
 import { prisma } from '../prisma.js'
 import { Resend } from 'resend'
 import { esc } from '../html.js'
+import { getOrgSettings, type Brand } from '../orgSettings.js'
 
 const router = Router()
 
@@ -15,7 +16,7 @@ function getRecipients(): string[] {
     .filter(Boolean)
 }
 
-function buildEmailHtml(req: {
+function buildEmailHtml(brand: Brand, req: {
   repName: string
   repEmail?: string | null
   repPhone?: string | null
@@ -67,8 +68,8 @@ function buildEmailHtml(req: {
 
         <!-- Header -->
         <tr>
-          <td style="background:#724fac;padding:24px 28px;">
-            <p style="margin:0;font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.08em;text-transform:uppercase;">Contento · Supply Request</p>
+          <td style="background:${esc(brand.primaryColor)};padding:24px 28px;">
+            <p style="margin:0;font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.08em;text-transform:uppercase;">${esc(brand.brandName)} · Supply Request</p>
             <h1 style="margin:4px 0 0;font-size:20px;font-weight:700;color:#fff;">${esc(eventName)}</h1>
           </td>
         </tr>
@@ -96,8 +97,8 @@ function buildEmailHtml(req: {
                   <p style="margin:0 0 6px;font-size:14px;color:#374151;"><strong>Event Date:</strong> ${esc(dateStr)}</p>
                   ${needByStr ? `<p style="margin:0 0 6px;font-size:14px;color:#374151;"><strong style="color:#ef4444;">Need By:</strong> ${esc(needByStr)}</p>` : ''}
                   <p style="margin:0 0 4px;font-size:14px;color:#374151;"><strong>Requested by:</strong> ${esc(req.repName)}</p>
-                  ${req.repEmail ? `<p style="margin:0 0 4px;font-size:14px;color:#374151;">📧 <a href="mailto:${esc(req.repEmail)}" style="color:#724fac;">${esc(req.repEmail)}</a></p>` : ''}
-                  ${req.repPhone ? `<p style="margin:0;font-size:14px;color:#374151;">📞 <a href="tel:${esc(req.repPhone)}" style="color:#724fac;">${esc(req.repPhone)}</a></p>` : ''}
+                  ${req.repEmail ? `<p style="margin:0 0 4px;font-size:14px;color:#374151;">📧 <a href="mailto:${esc(req.repEmail)}" style="color:${esc(brand.primaryColor)};">${esc(req.repEmail)}</a></p>` : ''}
+                  ${req.repPhone ? `<p style="margin:0;font-size:14px;color:#374151;">📞 <a href="tel:${esc(req.repPhone)}" style="color:${esc(brand.primaryColor)};">${esc(req.repPhone)}</a></p>` : ''}
                 </td>
               </tr>
             </table>
@@ -125,7 +126,7 @@ function buildEmailHtml(req: {
         <!-- Footer -->
         <tr>
           <td style="padding:16px 28px;border-top:1px solid #f1f5f9;background:#f8fafc;">
-            <p style="margin:0;font-size:12px;color:#9ca3af;">Sent from Contento · Log in to manage supply requests</p>
+            <p style="margin:0;font-size:12px;color:#9ca3af;">Sent from ${esc(brand.brandName)} · Log in to manage supply requests</p>
           </td>
         </tr>
       </table>
@@ -190,7 +191,8 @@ router.post('/', async (req, res) => {
     // Send email notification
     const recipients = getRecipients()
     if (resend && recipients.length > 0) {
-      const from = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
+      const brand = await getOrgSettings()
+      const from  = brand.fromEmail ?? process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
       const emailLabel = eventType === 'private_event' && eventTitle
         ? eventTitle
         : eventType === 'tasting' && storeName
@@ -204,7 +206,7 @@ router.post('/', async (req, res) => {
         from,
         to:      recipients,
         subject,
-        html:    buildEmailHtml(request),
+        html:    buildEmailHtml(brand, request),
       }).catch(err => console.error('Email send failed:', err))
     }
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { api, type PortalChain } from '@/lib/api'
+import { useBrand } from '@/lib/brand'
 import {
   RestockForm, PortalShell, PortalSuccess, PortalNotFound,
   type RestockFormValues,
@@ -32,6 +33,7 @@ export default function ChainPortal() {
 }
 
 function ChainForm({ token, chain }: { token: string; chain: PortalChain }) {
+  const brand = useBrand()
   // Defaults to unselected rather than chain-wide: an HQ buyer usually has a
   // specific location in mind, and an accidental chain-wide request is noisier
   // to triage than a missing one.
@@ -59,7 +61,7 @@ function ChainForm({ token, chain }: { token: string; chain: PortalChain }) {
             <p className="text-[11px] font-semibold text-accent uppercase tracking-wider">
               {chain.chain}
             </p>
-            <h1 className="text-xl font-semibold text-gray-900 mt-1">Request more Contento</h1>
+            <h1 className="text-xl font-semibold text-gray-900 mt-1">Request more {brand.brandName}</h1>
             <p className="text-sm text-gray-500 mt-0.5">
               Tell us which location needs attention.
             </p>

@@ -5,16 +5,16 @@ import { cleanStoreName, cityFromAddress, computedStoreName, storeExportName } f
 
 describe('cleanStoreName', () => {
   it('strips an abbreviation prefix and trailing "Store"', () => {
-    expect(cleanStoreName('GG-Addison Store', 'Goody Goody')).toBe('Addison')
+    expect(cleanStoreName('VV-Addison Store', 'Vine Valley')).toBe('Addison')
   })
 
   it('strips the full chain name used as a prefix', () => {
-    expect(cleanStoreName('Goody Goody - Uptown', 'Goody Goody')).toBe('Uptown')
+    expect(cleanStoreName('Vine Valley - Uptown', 'Vine Valley')).toBe('Uptown')
   })
 
   it('prefers the full chain name over its initials (no over-stripping)', () => {
-    // Must remove "Goody Goody - ", not just a leading "G".
-    expect(cleanStoreName('Goody Goody - Bishop Arts', 'Goody Goody')).toBe('Bishop Arts')
+    // Must remove "Vine Valley - ", not just a leading "V".
+    expect(cleanStoreName('Vine Valley - Bishop Arts', 'Vine Valley')).toBe('Bishop Arts')
   })
 
   it('falls back to a short alpha+dash prefix when the chain name does not match', () => {
@@ -23,7 +23,7 @@ describe('cleanStoreName', () => {
   })
 
   it('is case-insensitive about the prefix and trailing word', () => {
-    expect(cleanStoreName('gg-addison store', 'Goody Goody')).toBe('addison')
+    expect(cleanStoreName('vv-addison store', 'Vine Valley')).toBe('addison')
   })
 
   it('leaves a clean independent name untouched', () => {
@@ -31,7 +31,7 @@ describe('cleanStoreName', () => {
   })
 
   it('does not chop a name that merely starts with the chain initial', () => {
-    expect(cleanStoreName('Greenville Fine Wines', 'Goody Goody')).toBe('Greenville Fine Wines')
+    expect(cleanStoreName('Vineyard Fine Wines', 'Vine Valley')).toBe('Vineyard Fine Wines')
   })
 })
 
@@ -69,13 +69,13 @@ describe('cityFromAddress', () => {
 describe('computedStoreName', () => {
   it('chain store → city from address', () => {
     expect(computedStoreName({
-      chainName: 'Goody Goody', name: 'GG-Addison Store', address: '1 Main St, Addison, TX 75001',
+      chainName: 'Vine Valley', name: 'VV-Addison Store', address: '1 Main St, Addison, TX 75001',
     })).toBe('Addison')
   })
 
   it('chain store with no usable address → cleaned name', () => {
     expect(computedStoreName({
-      chainName: 'Goody Goody', name: 'GG-Addison Store', address: null,
+      chainName: 'Vine Valley', name: 'VV-Addison Store', address: null,
     })).toBe('Addison')
   })
 
@@ -91,15 +91,15 @@ describe('computedStoreName', () => {
 describe('storeExportName', () => {
   it('prefers an explicit display name over the computed name', () => {
     expect(storeExportName({
-      displayName: 'Addison (North)', chainName: 'Goody Goody',
-      name: 'GG-Addison Store', address: '1 Main St, Addison, TX 75001',
+      displayName: 'Addison (North)', chainName: 'Vine Valley',
+      name: 'VV-Addison Store', address: '1 Main St, Addison, TX 75001',
     })).toBe('Addison (North)')
   })
 
   it('falls back to the computed name when display name is blank/whitespace', () => {
     expect(storeExportName({
-      displayName: '   ', chainName: 'Goody Goody',
-      name: 'GG-Addison Store', address: '1 Main St, Addison, TX 75001',
+      displayName: '   ', chainName: 'Vine Valley',
+      name: 'VV-Addison Store', address: '1 Main St, Addison, TX 75001',
     })).toBe('Addison')
   })
 

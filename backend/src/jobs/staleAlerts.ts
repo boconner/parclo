@@ -10,7 +10,7 @@ import { resolveDisplayName } from '../storeDisplayName.js'
 //
 //   NO_MOVEMENT — the synced on-shelf count hasn't changed within
 //   `noMovementDays` while stock is actually present. Only meaningful for stores
-//   we sync (currently Goody Goody), because it needs a series of observations.
+//   with a retail stock sync, because it needs a series of observations.
 //   Deliberately requires onShelf > 0: a store sitting flat at zero is out of
 //   stock, which is a different problem and already has its own alert.
 //

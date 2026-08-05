@@ -237,7 +237,7 @@ export function AddStoreModal({ open, onClose, onAdd }: AddStoreModalProps) {
               label="Chain Store Number"
               id={`${uid}-storeNumber`}
               error={err('storeNumber')}
-              hint="The chain's own store ID, used to match live inventory (e.g. Goody Goody store 15)."
+              hint="The chain's own store ID, used to match live inventory (e.g. store #15)."
             >
               <Input {...field('storeNumber')} placeholder="e.g. 15" />
             </Field>

@@ -16,6 +16,7 @@ import AdminReps      from '@/pages/admin/AdminReps'
 import AdminChains    from '@/pages/admin/AdminChains'
 import AdminRegions   from '@/pages/admin/AdminRegions'
 import AdminProducts  from '@/pages/admin/AdminProducts'
+import AdminBranding  from '@/pages/admin/AdminBranding'
 import Inventory      from '@/pages/Inventory'
 import Requests       from '@/pages/Requests'
 import StorePortal    from '@/pages/StorePortal'
@@ -70,6 +71,7 @@ export default function App() {
             <Route path="admin/stores"  element={<AdminStores />} />
             <Route path="admin/reps"    element={<AdminReps />} />
             <Route path="admin/products" element={<AdminProducts />} />
+            <Route path="admin/branding" element={<AdminBranding />} />
             <Route path="admin"         element={<Navigate to="/admin/regions" replace />} />
           </Route>
         </Route>

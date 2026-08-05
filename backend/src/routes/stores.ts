@@ -190,8 +190,8 @@ router.delete('/:id', async (req, res) => {
       prisma.alert.deleteMany({ where: { storeId: id } }),
       prisma.contactStore.deleteMany({ where: { storeId: id } }),
       prisma.restockRequest.deleteMany({ where: { storeId: id } }),
-      // Sync history has a required FK — without this, deleting any store the
-      // Goody Goody sync has touched violates the constraint and 500s.
+      // Sync history has a required FK — without this, deleting any store a
+      // retail stock sync has touched violates the constraint and 500s.
       prisma.stockSync.deleteMany({ where: { storeId: id } }),
       // Deployments keep their quantity in chain-wide totals; only the
       // per-store attribution goes away with the store.

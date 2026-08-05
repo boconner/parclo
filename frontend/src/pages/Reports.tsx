@@ -20,7 +20,7 @@ import {
   useChainReport, useStoreHealthReport,
 } from '@/lib/reportHooks'
 import type { ReportParams, RegionInventoryRow, RepActivityRow, StockoutRow, ChainRow, StoreHealthRow } from '@/lib/reportHooks'
-import logoUrl from '@/assets/contento.png'
+import { useBrand } from '@/lib/brand'
 
 // ─── constants ────────────────────────────────────────────────────────────────
 
@@ -95,6 +95,8 @@ function useSortState<T extends string>(defaultCol: T, defaultDir: Dir = 'desc')
 // ─── page ─────────────────────────────────────────────────────────────────────
 
 export default function Reports() {
+  // Passed into the PDF exporters; empty string = no logo, wordmark fallback.
+  const logoUrl = useBrand().logoUrl ?? ''
   const [activeTab, setActiveTab] = useState<Tab>('overview')
 
   // Global filters

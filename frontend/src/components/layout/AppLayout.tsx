@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { clsx } from 'clsx'
 import { useUser, useClerk } from '@clerk/clerk-react'
-import contentoLogo from '@/assets/contento.png'
+import { BrandMark } from '@/lib/brand'
 import { version } from '../../../package.json'
 import { useStores, useRestockRequests } from '@/hooks/useQueries'
 import { CriticalStoresModal } from '@/components/stores/CriticalStoresModal'
@@ -148,6 +148,7 @@ export default function AppLayout() {
               <SidebarLink collapsed={c} to="/admin/stores"  label="Stores"           icon={<Icons.AdminStores />} />
               <SidebarLink collapsed={c} to="/admin/reps"    label="Reps"             icon={<Icons.Reps />} />
               <SidebarLink collapsed={c} to="/admin/products" label="Products"        icon={<Icons.Products />} />
+              <SidebarLink collapsed={c} to="/admin/branding" label="Branding"        icon={<Icons.Branding />} />
             </SidebarAccordion>
           </SidebarGroup>
         )}
@@ -223,7 +224,7 @@ export default function AppLayout() {
 
         {/* Logo */}
         <div className="flex items-center flex-shrink-0">
-          <img src={contentoLogo} alt="Contento" className="h-7 w-auto" />
+          <BrandMark className="h-7 w-auto" />
         </div>
 
         <div className="flex-1" />
@@ -424,6 +425,7 @@ const Icons = {
   Reps:        () => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="5.5" r="3"/><path d="M1.5 14.5c0-3.6 3-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg>,
   Config:      () => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5v1.2M8 13.3v1.2M1.5 8h1.2M13.3 8h1.2M3.4 3.4l.85.85M11.75 11.75l.85.85M3.4 12.6l.85-.85M11.75 4.25l.85-.85" strokeLinecap="round"/></svg>,
   Products:    () => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1.5l6 3v7l-6 3-6-3v-7l6-3z"/><path d="M2 4.5l6 3 6-3M8 7.5V14.5"/></svg>,
+  Branding:    () => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1.5a6.5 6.5 0 100 13c1.2 0 1.8-.7 1.8-1.5 0-.9-.7-1.3-.7-2 0-.8.6-1.5 1.6-1.5h1.3A2.5 2.5 0 0014.5 7 6 6 0 008 1.5z"/><circle cx="5" cy="6" r="0.9" fill="currentColor" stroke="none"/><circle cx="8.5" cy="4.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="11.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>,
 }
 
 // ─── sidebar sub-components ───────────────────────────────────────────────────

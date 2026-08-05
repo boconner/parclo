@@ -3,7 +3,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { Button } from '@/components/ui/Button'
 import { toast } from '@/components/ui/Toast'
 import type { StorePortalToken } from '@/lib/api'
-import contentoLogo from '@/assets/contento.png'
+import { useBrand } from '@/lib/brand'
 
 // Admin-only panel that generates and prints a customer-facing QR code. Used for
 // both the per-store code (a rep leaves it in-store) and the chain-level code
@@ -21,7 +21,8 @@ const COPY: Record<PortalKind, {
   panelTitle: string
   panelHint:  string
   emptyHint:  string
-  cardEyebrow: string
+  /** Eyebrow line on the printed card; takes the brand name. */
+  cardEyebrow: (brand: string) => string
   cardHeading: string
   cardSteps:   string
   urlPrefix:   string
@@ -30,7 +31,7 @@ const COPY: Record<PortalKind, {
     panelTitle:  'Store QR Code',
     panelHint:   'Lets staff report low stock without an account',
     emptyHint:   'No code yet. Generate one, print it, and leave it with the buyer.',
-    cardEyebrow: 'Running low on Contento?',
+    cardEyebrow: brand => `Running low on ${brand}?`,
     cardHeading: 'Scan to tell us',
     cardSteps:   'Point your phone camera at the code.<br/>Takes about 10 seconds — no app or login.',
     urlPrefix:   '/r/',
@@ -39,7 +40,7 @@ const COPY: Record<PortalKind, {
     panelTitle:  'Chain QR Code',
     panelHint:   'For an HQ buyer covering multiple locations',
     emptyHint:   'No code yet. Generate one and share it with the chain buyer.',
-    cardEyebrow: 'Need more Contento?',
+    cardEyebrow: brand => `Need more ${brand}?`,
     cardHeading: 'Scan to request',
     cardSteps:   'Point your phone camera at the code.<br/>Choose a location or request account-wide.',
     urlPrefix:   '/c/',
@@ -54,13 +55,12 @@ function escapeHtml(s: string): string {
 /**
  * Origin-qualified logo URL for the print window.
  *
- * The print window is about:blank, which has no base URL, so the root-relative
- * path Vite emits ("/assets/contento-<hash>.png") would not resolve there. Left
- * as-is when the bundler inlines it as a data: URI or points at another host.
+ * The print window is about:blank, which has no base URL, so a root-relative
+ * logo path would not resolve there. Left as-is for data:/http(s)/blob URLs.
  */
-function absoluteLogoUrl(): string {
-  if (/^(data:|https?:|blob:)/i.test(contentoLogo)) return contentoLogo
-  return `${window.location.origin}${contentoLogo.startsWith('/') ? '' : '/'}${contentoLogo}`
+function absoluteLogoUrl(logoUrl: string): string {
+  if (/^(data:|https?:|blob:)/i.test(logoUrl)) return logoUrl
+  return `${window.location.origin}${logoUrl.startsWith('/') ? '' : '/'}${logoUrl}`
 }
 
 export function PortalQrCard({
@@ -82,6 +82,7 @@ export function PortalQrCard({
   const [confirmRotate, setConfirmRotate] = useState(false)
   const qrWrapRef = useRef<HTMLDivElement>(null)
 
+  const brand     = useBrand()
   const copy      = COPY[kind]
   const token     = tokenQuery.data?.token ?? null
   const portalUrl = token ? `${window.location.origin}${copy.urlPrefix}${token}` : null
@@ -103,7 +104,7 @@ export function PortalQrCard({
     const safeSubtitle = subtitle ? escapeHtml(subtitle) : ''
 
     win.document.write(`<!doctype html>
-<html><head><title>Contento — ${safeSubtitle ? `${safeSubtitle} ` : ''}${safeTitle}</title>
+<html><head><title>${escapeHtml(brand.brandName)} — ${safeSubtitle ? `${safeSubtitle} ` : ''}${safeTitle}</title>
 <style>
   @page { margin: 0.5in; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -112,11 +113,11 @@ export function PortalQrCard({
          /* Browsers strip background colours and images when printing unless
             this is set — without it the logo and purple border drop out. */
          -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .card { width: 4in; border: 2px solid #724fac; border-radius: 16px;
+  .card { width: 4in; border: 2px solid ${brand.primaryColor}; border-radius: 16px;
           padding: 28px; text-align: center; }
   .logo { height: 32px; width: auto; margin: 0 auto 18px; display: block; }
   .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
-             text-transform: uppercase; color: #724fac; margin: 0 0 6px; }
+             text-transform: uppercase; color: ${brand.primaryColor}; margin: 0 0 6px; }
   h1 { font-size: 20px; margin: 0 0 4px; color: #111827; }
   .chain { font-size: 15px; font-weight: 700; color: #111827; margin: 0 0 2px; }
   .store { font-size: 13px; color: #6b7280; margin: 0 0 20px; }
@@ -126,16 +127,16 @@ export function PortalQrCard({
   .foot { font-size: 10px; color: #9ca3af; margin: 14px 0 0; }
 </style></head>
 <body><div class="card">
-  <img class="logo" src="${absoluteLogoUrl()}" alt="Contento"
-       onerror="this.style.display='none'" />
-  <p class="eyebrow">${copy.cardEyebrow}</p>
+  ${brand.logoUrl ? `<img class="logo" src="${absoluteLogoUrl(brand.logoUrl)}" alt="${escapeHtml(brand.brandName)}"
+       onerror="this.style.display='none'" />` : ''}
+  <p class="eyebrow">${escapeHtml(copy.cardEyebrow(brand.brandName))}</p>
   <h1>${copy.cardHeading}</h1>
   ${safeSubtitle ? `<p class="chain">${safeSubtitle}</p>` : ''}
   <p class="store">${safeTitle}</p>
   <div class="qr">${svgMarkup}</div>
   <p class="steps">${copy.cardSteps}</p>
   <p class="url">${portalUrl}</p>
-  <p class="foot">Powered by ParClo</p>
+  <p class="foot">Powered by Parclo</p>
 </div>
 <script>
   // Print once the logo has loaded, with a timeout fallback so a slow or

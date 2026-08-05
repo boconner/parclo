@@ -8,11 +8,11 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['contento.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png'],
+      includeAssets: ['icon-192.png', 'icon-512.png', 'icon-512-maskable.png'],
       manifest: {
-        name: 'Contento',
-        short_name: 'Contento',
-        description: 'Beverage distribution inventory & field rep management',
+        name: 'Parclo',
+        short_name: 'Parclo',
+        description: 'Retail execution — inventory & field rep management',
         theme_color: '#724fac',
         background_color: '#ffffff',
         display: 'standalone',

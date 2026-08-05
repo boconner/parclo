@@ -5,11 +5,11 @@ import { cleanStoreName, cityFromAddress, resolveDisplayName } from './storeDisp
 // ─── cleanStoreName ─────────────────────────────────────────────────────────
 
 test('cleanStoreName strips an abbreviation prefix and trailing "Store"', () => {
-  assert.equal(cleanStoreName('GG-Addison Store', 'Goody Goody'), 'Addison')
+  assert.equal(cleanStoreName('VV-Addison Store', 'Vine Valley'), 'Addison')
 })
 
 test('cleanStoreName strips the full chain name used as a prefix', () => {
-  assert.equal(cleanStoreName('Goody Goody - Uptown', 'Goody Goody'), 'Uptown')
+  assert.equal(cleanStoreName('Vine Valley - Uptown', 'Vine Valley'), 'Uptown')
 })
 
 test('cleanStoreName falls back to a short alpha+dash prefix', () => {
@@ -34,15 +34,15 @@ test('cityFromAddress returns empty without a "ST Zip" tail', () => {
 
 test('resolveDisplayName prefers an explicit display name', () => {
   assert.equal(resolveDisplayName({
-    displayName: 'Addison (North)', chainName: 'Goody Goody',
-    name: 'GG-Addison Store', address: '1 Main St, Addison, TX 75001',
+    displayName: 'Addison (North)', chainName: 'Vine Valley',
+    name: 'VV-Addison Store', address: '1 Main St, Addison, TX 75001',
   }), 'Addison (North)')
 })
 
 test('resolveDisplayName: chain store falls back to the city', () => {
   assert.equal(resolveDisplayName({
-    displayName: null, chainName: 'Goody Goody',
-    name: 'GG-Addison Store', address: '1 Main St, Addison, TX 75001',
+    displayName: null, chainName: 'Vine Valley',
+    name: 'VV-Addison Store', address: '1 Main St, Addison, TX 75001',
   }), 'Addison')
 })
 

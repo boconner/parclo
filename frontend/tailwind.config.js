@@ -5,10 +5,13 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Set as CSS variables in index.css and re-applied at runtime from
+        // OrgSettings.primaryColor (see lib/brand.tsx) so the accent is
+        // per-deployment config, not a build-time constant.
         accent: {
-          DEFAULT: '#724fac',
-          light:   '#f3eef9',
-          hover:   '#5f3f93',
+          DEFAULT: 'rgb(var(--accent-rgb) / <alpha-value>)',
+          light:   'var(--accent-light)',
+          hover:   'var(--accent-hover)',
         },
       },
       fontFamily: {

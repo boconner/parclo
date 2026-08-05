@@ -6,6 +6,15 @@
 @tailwind utilities;
  
  
+/* Accent theme — defaults match DEFAULT_BRAND in lib/brand.tsx; overridden at
+   runtime from OrgSettings.primaryColor. */
+:root {
+  --accent: #724fac;
+  --accent-rgb: 114 79 172;
+  --accent-light: #f3eef9;
+  --accent-hover: #5f3f93;
+}
+
 @layer base {
   * { box-sizing: border-box; }
   html {
@@ -96,10 +105,10 @@ html.dark .hover\:text-gray-700:hover     { color: #cbd5e1; }
 html.dark .hover\:text-gray-600:hover     { color: #94a3b8; }
 
 /* Accent variants */
-html.dark .bg-accent-light                { background-color: rgba(114, 79, 172, 0.25); }
-html.dark .hover\:bg-accent-light:hover   { background-color: rgba(114, 79, 172, 0.35); }
-html.dark .hover\:bg-accent\/5:hover      { background-color: rgba(114, 79, 172, 0.12); }
-html.dark .border-accent\/20              { border-color: rgba(114, 79, 172, 0.3); }
+html.dark .bg-accent-light                { background-color: rgb(var(--accent-rgb) / 0.25); }
+html.dark .hover\:bg-accent-light:hover   { background-color: rgb(var(--accent-rgb) / 0.35); }
+html.dark .hover\:bg-accent\/5:hover      { background-color: rgb(var(--accent-rgb) / 0.12); }
+html.dark .border-accent\/20              { border-color: rgb(var(--accent-rgb) / 0.3); }
 
 /* Status backgrounds — slightly desaturated in dark mode */
 html.dark .bg-red-50    { background-color: rgba(239, 68, 68, 0.12); }

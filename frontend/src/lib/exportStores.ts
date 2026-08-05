@@ -1,4 +1,5 @@
 import type { DashboardStore } from '@/types'
+import { brandSlug } from '@/lib/brand'
 
 // Store list → CSV export. Columns: Chain, Store Name, Display Name, Address, Region.
 //
@@ -8,8 +9,8 @@ import type { DashboardStore } from '@/types'
 //    fallback (storeExportName → computedStoreName):
 //      - Chain store → the city, pulled from the stored "Street, City, ST Zip"
 //        address (cityFromAddress), falling back to cleanStoreName when there's no
-//        usable address. cleanStoreName strips the chain prefix ("GG-",
-//        "Goody Goody - ") and a trailing "Store" from the name.
+//        usable address. cleanStoreName strips the chain prefix ("VV-",
+//        "Vine Valley - ") and a trailing "Store" from the name.
 //      - Independent store (no chain) → its actual name, verbatim.
 //  · Address      → the full stored string, as-is.
 //  · Region       → the region/market name.
@@ -41,8 +42,8 @@ function escapeRegExp(s: string): string {
 
 /**
  * Strip the chain prefix and a trailing "Store" from a store's display name.
- *   "GG-Addison Store"      (chain "Goody Goody") → "Addison"
- *   "Goody Goody - Uptown"  (chain "Goody Goody") → "Uptown"
+ *   "VV-Addison Store"      (chain "Vine Valley") → "Addison"
+ *   "Vine Valley - Uptown"  (chain "Vine Valley") → "Uptown"
  *   "LD - Arlington"                              → "Arlington"
  *
  * Prefixes are matched chain-aware first (full chain name, then its initials),
@@ -57,7 +58,7 @@ export function cleanStoreName(name: string, chainName: string | null): string {
     const initials = chainName.split(/\s+/).map(w => w[0] ?? '').join('')
     if (initials.length >= 2) prefixes.push(initials)
   }
-  // Longest first so "Goody Goody" wins over a stray "G".
+  // Longest first so the full chain name wins over its initials.
   prefixes.sort((a, b) => b.length - a.length)
 
   let stripped = false
@@ -117,5 +118,5 @@ export function exportStoresCSV(stores: DashboardStore[], filenameHint = 'stores
     s.regionName,
   ])
   const slug = filenameHint.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'stores'
-  download(toCsv(headers, rows), `contento-${slug}-${Date.now()}.csv`, 'text/csv;charset=utf-8;')
+  download(toCsv(headers, rows), `${brandSlug()}-${slug}-${Date.now()}.csv`, 'text/csv;charset=utf-8;')
 }

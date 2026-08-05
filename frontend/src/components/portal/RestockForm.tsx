@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import type { StockLevel } from '@/lib/api'
-import contentoLogo from '@/assets/contento.png'
+import { BrandMark, useBrand } from '@/lib/brand'
 
 // Shared UI for both customer-facing portals (per-store /r/:token and
 // chain-level /c/:token). The two differ only in their header and in whether a
@@ -36,12 +36,12 @@ export function PortalShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="h-14 flex items-center justify-center border-b border-gray-200 bg-white">
-        <img src={contentoLogo} alt="Contento" className="h-7 w-auto" />
+        <BrandMark className="h-7 w-auto" />
       </header>
       <main className="max-w-md mx-auto px-5 py-8">
         {children}
         <p className="text-[11px] text-gray-300 text-center mt-10">
-          Powered by <span className="font-medium text-gray-400">ParClo</span>
+          Powered by <span className="font-medium text-gray-400">Parclo</span>
         </p>
       </main>
     </div>
@@ -49,6 +49,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
 }
 
 export function PortalSuccess({ copySentTo }: { copySentTo?: string | null }) {
+  const brand = useBrand()
   return (
     <PortalShell>
       <div className="text-center py-12">
@@ -59,7 +60,7 @@ export function PortalSuccess({ copySentTo }: { copySentTo?: string | null }) {
         </div>
         <h1 className="text-lg font-semibold text-gray-900">Thanks — we've got it</h1>
         <p className="text-sm text-gray-500 mt-2 max-w-xs mx-auto">
-          The Contento team has been notified and will follow up.
+          The {brand.brandName} team has been notified and will follow up.
         </p>
         {copySentTo && (
           <p className="text-sm text-gray-500 mt-2 max-w-xs mx-auto">
@@ -73,12 +74,13 @@ export function PortalSuccess({ copySentTo }: { copySentTo?: string | null }) {
 }
 
 export function PortalNotFound() {
+  const brand = useBrand()
   return (
     <PortalShell>
       <div className="text-center py-12">
         <h1 className="text-lg font-semibold text-gray-900">This code isn't active</h1>
         <p className="text-sm text-gray-500 mt-2 max-w-xs mx-auto">
-          The QR code may have been replaced. Please ask your Contento rep for a new one.
+          The QR code may have been replaced. Please ask your {brand.brandName} rep for a new one.
         </p>
       </div>
     </PortalShell>
@@ -99,6 +101,7 @@ export function RestockForm({
   error:           string | null
   onSubmit:        (values: RestockFormValues) => void
 }) {
+  const brand = useBrand()
   const [stockLevel,     setStockLevel]     = useState<StockLevel | null>(null)
   const [bottlesLeft,    setBottlesLeft]    = useState('')
   const [casesRequested, setCasesRequested] = useState('')
@@ -139,7 +142,7 @@ export function RestockForm({
 
       <fieldset>
         <legend className="text-sm font-semibold text-gray-900 mb-3">
-          How's your Contento stock?
+          How's your {brand.brandName} stock?
         </legend>
         <div className="grid grid-cols-3 gap-2">
           {STOCK_OPTIONS.map(opt => (
@@ -312,7 +315,7 @@ export function RestockForm({
       </button>
 
       <p className="text-xs text-gray-400 text-center leading-relaxed">
-        This lets your Contento rep know you're running low — it isn't an order.
+        This lets your {brand.brandName} rep know you're running low — it isn't an order.
         Product is supplied through your distributor as usual.
       </p>
     </form>

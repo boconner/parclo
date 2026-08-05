@@ -8,7 +8,7 @@ function daysBefore(days: number): Date {
   return new Date(NOW.getTime() - days * 24 * 60 * 60 * 1000)
 }
 
-/** Sync readings every 2 days (the Goody Goody cadence), oldest first. */
+/** Sync readings every 2 days (a typical retailer sync cadence), oldest first. */
 function series(levels: number[], spanDays: number): SyncPoint[] {
   const step = spanDays / Math.max(1, levels.length - 1)
   return levels.map((onShelf, i) => ({

@@ -24,6 +24,8 @@ import publicRouter         from './routes/public.js'
 import portalRouter         from './routes/portal.js'
 import restockRequestsRouter from './routes/restock-requests.js'
 import productsRouter        from './routes/products.js'
+import settingsRouter        from './routes/settings.js'
+import { getOrgSettings }    from './orgSettings.js'
 
 const app = express()
 
@@ -40,8 +42,20 @@ app.use('/api/public', publicRouter)
 
 // Customer-facing store portal (QR code in store). Token-gated and rate limited
 // inside the router — also before the Clerk gate, since retail staff have no
-// Contento account by design.
+// account in this app by design.
 app.use('/api/portal', portalRouter)
+
+// Public brand identity (name, logo, color) for the login page and portal —
+// rendered before any session exists, so this sits ahead of the Clerk gate.
+app.get('/api/brand', async (_req, res) => {
+  try {
+    const s = await getOrgSettings()
+    res.json({ brandName: s.brandName, logoUrl: s.logoUrl, primaryColor: s.primaryColor })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Internal server error' })
+  }
+})
 
 app.use(clerkMiddleware())
 
@@ -83,6 +97,7 @@ app.use('/api/supply-requests',  supplyRequestsRouter)
 app.use('/api/restock-requests', restockRequestsRouter)
 app.use('/api/inventory',        inventoryRouter)
 app.use('/api/products',         productsRouter)
+app.use('/api/settings',         settingsRouter)
 
 const PORT = process.env.PORT ?? 3001
 

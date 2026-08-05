@@ -60,7 +60,7 @@ export function UpdateBanner() {
                  rounded-xl border border-accent/20 bg-white px-4 py-3 shadow-lg
                  max-w-[calc(100vw-2rem)]"
     >
-      <span className="text-sm text-gray-700">A new version of Contento is available.</span>
+      <span className="text-sm text-gray-700">A new version of the app is available.</span>
       <button
         onClick={() => window.location.reload()}
         className="shrink-0 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white

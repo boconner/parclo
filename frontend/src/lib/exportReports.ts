@@ -2,6 +2,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import html2canvas from 'html2canvas'
 import type { RegionInventoryRow, RepActivityRow, StockoutRow } from '@/lib/reportHooks'
+import { getBrandCached, brandSlug, hexToRgb, DEFAULT_BRAND } from '@/lib/brand'
 
 export interface ExportData {
   periodLabel:  string
@@ -17,7 +18,8 @@ export interface ExportData {
 
 // ─── color constants ──────────────────────────────────────────────────────────
 
-const ACCENT  = [114, 79, 172] as [number, number, number]
+const ACCENT: [number, number, number] =
+  hexToRgb(getBrandCached().primaryColor) ?? hexToRgb(DEFAULT_BRAND.primaryColor)!
 const GRAY9   = [17,  24,  39] as [number, number, number]
 const GRAY5   = [107, 114, 128] as [number, number, number]
 const GRAY1   = [243, 244, 246] as [number, number, number]
@@ -82,10 +84,15 @@ async function buildHeader(
   doc.setFillColor(...ACCENT)
   doc.rect(0, 0, W, 52, 'F')
 
-  // Logo
-  const logoData = await getLogoBase64(logoUrl)
+  // Logo, or the brand name as a wordmark when none is configured
+  const logoData = logoUrl ? await getLogoBase64(logoUrl) : null
   if (logoData) {
     try { doc.addImage(logoData, 'PNG', 30, 8, 90, 28) } catch { /* skip if fails */ }
+  } else {
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(16)
+    doc.setTextColor(255, 255, 255)
+    doc.text(getBrandCached().brandName, 30, 30)
   }
 
   // Title on right side
@@ -114,7 +121,7 @@ function sectionTitle(doc: jsPDF, title: string, y: number): number {
 
 export function exportCSV({ periodLabel, marketLabel, inventory, activity, stockouts }: ExportData) {
   const sections: string[] = []
-  sections.push(`Contento Report — ${marketLabel} — ${periodLabel}`)
+  sections.push(`${getBrandCached().brandName} Report — ${marketLabel} — ${periodLabel}`)
   sections.push(`Generated: ${new Date().toLocaleDateString('en-US', { dateStyle: 'long' })}`)
   sections.push('')
 
@@ -145,7 +152,7 @@ export function exportCSV({ periodLabel, marketLabel, inventory, activity, stock
     }),
   ))
 
-  download(sections.join('\n'), `contento-report-${Date.now()}.csv`, 'text/csv;charset=utf-8;')
+  download(sections.join('\n'), `${brandSlug()}-report-${Date.now()}.csv`, 'text/csv;charset=utf-8;')
 }
 
 // ─── full PDF export ──────────────────────────────────────────────────────────
@@ -266,7 +273,7 @@ export async function exportPDF(data: ExportData, logoUrl: string) {
     })
   }
 
-  doc.save(`contento-report-${Date.now()}.pdf`)
+  doc.save(`${brandSlug()}-report-${Date.now()}.pdf`)
 }
 
 // ─── individual section PDF export ───────────────────────────────────────────
@@ -304,5 +311,5 @@ export async function exportSectionPDF(
     })
   }
 
-  doc.save(`contento-${title.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`)
+  doc.save(`${brandSlug()}-${title.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`)
 }

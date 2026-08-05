@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import { esc } from './html.js'
+import { getOrgSettings, type Brand } from './orgSettings.js'
 
 // Notification email for customer-portal restock requests. Kept separate from
 // the rep-facing supply-request email because the audience and the framing are
@@ -62,9 +63,9 @@ export interface RestockEmailInput {
  * @param intro optional block placed above the details — used to turn the same
  *              layout into a receipt for the person who submitted the form.
  */
-function buildHtml(r: RestockEmailInput, intro = ''): string {
+function buildHtml(r: RestockEmailInput, brand: Brand, intro = ''): string {
   const stockLabel = STOCK_LABELS[r.stockLevel] ?? r.stockLevel
-  const stockColor = STOCK_COLORS[r.stockLevel] ?? '#724fac'
+  const stockColor = STOCK_COLORS[r.stockLevel] ?? brand.primaryColor
   const submitted  = r.createdAt.toLocaleString('en-US', {
     weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
   })
@@ -85,9 +86,9 @@ function buildHtml(r: RestockEmailInput, intro = ''): string {
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;">
 
         <tr>
-          <td style="background:#724fac;padding:24px 28px;">
+          <td style="background:${esc(brand.primaryColor)};padding:24px 28px;">
             <p style="margin:0;font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.08em;text-transform:uppercase;">
-              Contento · Store Request${r.chainName ? ` · ${esc(r.chainName)}` : ''}
+              ${esc(brand.brandName)} · Store Request${r.chainName ? ` · ${esc(r.chainName)}` : ''}
             </p>
             <h1 style="margin:4px 0 0;font-size:20px;font-weight:700;color:#fff;">${esc(r.storeName)}</h1>
           </td>
@@ -121,7 +122,7 @@ function buildHtml(r: RestockEmailInput, intro = ''): string {
                   ${r.storeAddress ? `<p style="margin:0 0 6px;font-size:14px;color:#374151;">${esc(r.storeAddress)}</p>` : ''}
                   ${r.regionName ? `<p style="margin:0 0 6px;font-size:14px;color:#374151;">Region: ${esc(r.regionName)}</p>` : ''}
                   <p style="margin:0 0 4px;font-size:13px;color:#9ca3af;">Submitted ${esc(submitted)}${submitter ? ` by ${esc(submitter)}` : ''}</p>
-                  ${r.submitterEmail ? `<p style="margin:0;font-size:13px;color:#374151;">📧 <a href="mailto:${esc(r.submitterEmail)}" style="color:#724fac;">${esc(r.submitterEmail)}</a></p>` : ''}
+                  ${r.submitterEmail ? `<p style="margin:0;font-size:13px;color:#374151;">📧 <a href="mailto:${esc(r.submitterEmail)}" style="color:${esc(brand.primaryColor)};">${esc(r.submitterEmail)}</a></p>` : ''}
                 </td>
               </tr>
             </table>
@@ -142,7 +143,7 @@ function buildHtml(r: RestockEmailInput, intro = ''): string {
             ` : ''}
 
             ${r.appUrl ? `
-            <a href="${esc(r.appUrl)}" style="display:inline-block;background:#724fac;color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:10px 18px;border-radius:8px;">Open in Contento</a>
+            <a href="${esc(r.appUrl)}" style="display:inline-block;background:${esc(brand.primaryColor)};color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:10px 18px;border-radius:8px;">Open in ${esc(brand.brandName)}</a>
             ` : ''}
           </td>
         </tr>
@@ -175,7 +176,8 @@ export async function sendRestockEmail(input: RestockEmailInput): Promise<void> 
   const recipients = fallbackRecipients()
   if (!resend || recipients.length === 0) return
 
-  const from   = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
+  const brand  = await getOrgSettings()
+  const from   = brand.fromEmail ?? process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
   const urgent = input.stockLevel === 'out_of_stock'
   // Lead with the chain: "Spec's — Austin" is triageable from a phone lock
   // screen in a way that "Austin" alone is not.
@@ -189,7 +191,7 @@ export async function sendRestockEmail(input: RestockEmailInput): Promise<void> 
     : `Store Request — ${label}`
 
   try {
-    await resend.emails.send({ from, to: recipients, subject, html: buildHtml(input) })
+    await resend.emails.send({ from, to: recipients, subject, html: buildHtml(input, brand) })
   } catch (err) {
     console.error('Restock email send failed:', err)
   }
@@ -210,7 +212,8 @@ export async function sendRequesterCopy(input: RestockEmailInput): Promise<void>
   const to = input.submitterEmail?.trim()
   if (!resend || !to || !looksLikeEmail(to)) return
 
-  const from  = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
+  const brand = await getOrgSettings()
+  const from  = brand.fromEmail ?? process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
   const label = input.chainWide
     ? `${input.chainName ?? 'your chain'} (all locations)`
     : input.chainName
@@ -220,7 +223,7 @@ export async function sendRequesterCopy(input: RestockEmailInput): Promise<void>
   const receiptIntro = `
     <p style="margin:0 0 14px;font-size:14px;color:#374151;line-height:1.6;">
       Thanks${input.submitterName ? ` ${esc(input.submitterName)}` : ''} — we've received your
-      request for <strong>${esc(label)}</strong> and the Contento team has been notified.
+      request for <strong>${esc(label)}</strong> and the ${esc(brand.brandName)} team has been notified.
       Here's a copy for your records.
     </p>
     <p style="margin:0 0 20px;font-size:13px;color:#9ca3af;line-height:1.6;">
@@ -232,8 +235,8 @@ export async function sendRequesterCopy(input: RestockEmailInput): Promise<void>
     await resend.emails.send({
       from,
       to:      [to],
-      subject: `Your Contento request — ${label}`,
-      html:    buildHtml(input, receiptIntro),
+      subject: `Your ${brand.brandName} request — ${label}`,
+      html:    buildHtml(input, brand, receiptIntro),
     })
   } catch (err) {
     console.error('Requester copy send failed:', err)

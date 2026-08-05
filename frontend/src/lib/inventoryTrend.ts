@@ -3,7 +3,7 @@
 // An "observation" is any point in time where we learned the shelf count. There
 // are two sources and they are equally valid:
 //   · rep visits        — sparse, whenever someone walks in
-//   · stock syncs       — dense, every 2 days for synced chains (Goody Goody)
+//   · stock syncs       — dense, frequent readings for chains with a retail sync
 //
 // The chart previously used visits only, so a synced store drew a handful of
 // stale points while a far richer series sat unused in the Stock Sync Log panel
