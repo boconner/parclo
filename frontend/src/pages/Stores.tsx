@@ -439,12 +439,28 @@ function StoreListView({
               <tbody>{Array.from({ length: 6 }).map((_, i) => <SkeletonTableRow key={i} cols={showChainCol ? 10 : 9} />)}</tbody>
             </table>
           ) : filtered.length === 0 ? (
-            <div className="py-16 text-center">
-              <p className="text-sm font-medium text-gray-500">No stores match your filters</p>
-              <button onClick={() => setStatusFilter('all')} className="mt-2 text-xs text-accent hover:underline">
-                Clear filters
-              </button>
-            </div>
+            allStores.length === 0 ? (
+              // First run — nothing imported yet, so point at setup instead of filters.
+              <div className="py-16 text-center">
+                <p className="text-sm font-medium text-gray-500 mb-1">No stores yet</p>
+                <p className="text-xs text-gray-400 mb-4 max-w-xs mx-auto">
+                  Import your store list to see every account, its shelf level, and who covers it.
+                </p>
+                <Link
+                  to="/admin/stores"
+                  className="inline-block px-3 py-1.5 text-xs font-semibold bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
+                >
+                  Import Stores
+                </Link>
+              </div>
+            ) : (
+              <div className="py-16 text-center">
+                <p className="text-sm font-medium text-gray-500">No stores match your filters</p>
+                <button onClick={() => setStatusFilter('all')} className="mt-2 text-xs text-accent hover:underline">
+                  Clear filters
+                </button>
+              </div>
+            )
           ) : (
             <table className="w-full min-w-[800px]">
               <thead>

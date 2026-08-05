@@ -15,6 +15,8 @@ const emptyForm: OrgSettings = {
   fromEmail:    null,
   supportEmail: null,
   appUrl:       null,
+  featureEvents:   true,
+  featurePipeline: true,
 }
 
 export default function AdminBranding() {
@@ -126,6 +128,32 @@ export default function AdminBranding() {
             />
             <p className="mt-1 text-xs text-gray-400">Used for "Open in {form.brandName.trim() || 'the app'}" links in notification emails.</p>
           </div>
+        </div>
+
+        <div className="p-5 space-y-3">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Features</p>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox" checked={form.featureEvents}
+              onChange={e => patch({ featureEvents: e.target.checked })}
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent/30"
+            />
+            <span>
+              <span className="block text-sm font-medium text-gray-900">Events & tastings calendar</span>
+              <span className="block text-xs text-gray-400">Scheduling and closing out in-store events. Off hides the Calendar.</span>
+            </span>
+          </label>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox" checked={form.featurePipeline}
+              onChange={e => patch({ featurePipeline: e.target.checked })}
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent/30"
+            />
+            <span>
+              <span className="block text-sm font-medium text-gray-900">Supply pipeline</span>
+              <span className="block text-xs text-gray-400">Production → warehouse → field inventory ledger. Off hides the Inventory page.</span>
+            </span>
+          </label>
         </div>
 
         <div className="px-5 py-4 flex items-center justify-end gap-3 bg-gray-50/50 rounded-b-xl">

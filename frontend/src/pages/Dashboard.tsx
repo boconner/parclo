@@ -15,7 +15,7 @@ import { ActivityFeed } from '@/components/dashboard/ActivityFeed'
 import { LogVisitModal } from '@/components/stores/LogVisitModal'
 import type { StoreVisit } from '@/types'
 import type { DashboardStore } from '@/types'
-import { useDashboard, useRegions, useAlerts, useEvents, useReps, useCreateVisit, useUpdateEvent, useWeeklyDepletion } from '@/hooks/useQueries'
+import { useDashboard, useRegions, useAlerts, useEvents, useReps, useCreateVisit, useUpdateEvent, useWeeklyDepletion, useSetupStatus } from '@/hooks/useQueries'
 import { useInventory, BOTTLES_PER_CASE } from '@/hooks/useCasesOut'
 import { toast } from '@/components/ui/Toast'
 import { useUser } from '@clerk/clerk-react'
@@ -127,6 +127,8 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 lg:p-8">
+
+      <SetupBanner isAdmin={isAdmin} />
 
       {/* PAGE HEADER */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
@@ -560,5 +562,33 @@ function RepStoreCard({ store, onLog }: { store: DashboardStore; onLog: () => vo
         Log
       </button>
     </div>
+  )
+}
+// Nudges admins to finish onboarding; disappears once every step is done.
+// Reps never fetch setup status — the checklist is admin work.
+function SetupBanner({ isAdmin }: { isAdmin: boolean }) {
+  const { data: status } = useSetupStatus(isAdmin)
+  if (!isAdmin || !status || status.complete) return null
+
+  const steps = [
+    status.brandingConfigured, status.productCount > 0, status.storeCount > 0,
+    status.repCount > 0, status.qrIssuedCount > 0,
+  ]
+  const done = steps.filter(Boolean).length
+
+  return (
+    <Link
+      to="/admin/setup"
+      className="flex items-center gap-3 mb-5 px-4 py-3 bg-accent-light border border-accent/20 rounded-xl hover:border-accent/40 transition-colors"
+    >
+      <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">
+        {done}/{steps.length}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-gray-900">Finish setting up</p>
+        <p className="text-xs text-gray-500">Complete the Getting Started checklist to get your team live.</p>
+      </div>
+      <span className="text-xs font-semibold text-accent flex-shrink-0">Continue →</span>
+    </Link>
   )
 }

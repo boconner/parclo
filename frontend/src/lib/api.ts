@@ -158,6 +158,17 @@ export interface OrgSettings {
   fromEmail:    string | null
   supportEmail: string | null
   appUrl:       string | null
+  featureEvents:   boolean
+  featurePipeline: boolean
+}
+
+export interface SetupStatus {
+  brandingConfigured: boolean
+  productCount:  number
+  storeCount:    number
+  repCount:      number
+  qrIssuedCount: number
+  complete:      boolean
 }
 
 export interface Product {
@@ -268,6 +279,8 @@ export const api = {
 
   updateOrgSettings: (body: Partial<OrgSettings>) =>
     request<OrgSettings>('/api/settings', { method: 'PATCH', body: JSON.stringify(body) }),
+
+  getSetupStatus: () => request<SetupStatus>('/api/settings/setup-status'),
 
   // Products
   getProducts: (includeArchived = false) =>

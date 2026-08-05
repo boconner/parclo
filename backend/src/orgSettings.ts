@@ -7,6 +7,8 @@ export interface Brand {
   fromEmail:    string | null
   supportEmail: string | null
   appUrl:       string | null
+  featureEvents:   boolean
+  featurePipeline: boolean
 }
 
 /** Load the org settings singleton, creating it with defaults on first read. */
@@ -23,5 +25,7 @@ export async function getOrgSettings(): Promise<Brand> {
     fromEmail:    s.fromEmail,
     supportEmail: s.supportEmail,
     appUrl:       s.appUrl,
+    featureEvents:   s.featureEvents,
+    featurePipeline: s.featurePipeline,
   }
 }

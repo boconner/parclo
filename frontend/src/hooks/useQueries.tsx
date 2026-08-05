@@ -129,6 +129,25 @@ export function useUpdateStore() {
   })
 }
 
+// ─── Org settings & onboarding ────────────────────────────────────────────────
+
+export function useOrgSettings() {
+  return useQuery({
+    queryKey:  ['org-settings'],
+    queryFn:   api.getOrgSettings,
+    staleTime: 5 * 60_000,
+  })
+}
+
+export function useSetupStatus(enabled = true) {
+  return useQuery({
+    queryKey:  ['setup-status'],
+    queryFn:   api.getSetupStatus,
+    staleTime: 30_000,
+    enabled,
+  })
+}
+
 // ─── Products ─────────────────────────────────────────────────────────────────
 
 export function useProducts(includeArchived = false) {

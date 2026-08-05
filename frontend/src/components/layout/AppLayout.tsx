@@ -6,7 +6,7 @@ import { clsx } from 'clsx'
 import { useUser, useClerk } from '@clerk/clerk-react'
 import { BrandMark } from '@/lib/brand'
 import { version } from '../../../package.json'
-import { useStores, useRestockRequests } from '@/hooks/useQueries'
+import { useStores, useRestockRequests, useOrgSettings } from '@/hooks/useQueries'
 import { CriticalStoresModal } from '@/components/stores/CriticalStoresModal'
 import { ReorderStoresModal } from '@/components/stores/ReorderStoresModal'
 import { CommandPalette } from '@/components/ui/CommandPalette'
@@ -112,6 +112,12 @@ export default function AppLayout() {
   const { data: openRequests } = useRestockRequests({ status: 'new_request' })
   const newRequests = openRequests?.length ?? 0
 
+  // Feature flags default on until settings load, so nav never flashes away
+  // for fully-featured deployments.
+  const { data: orgSettings } = useOrgSettings()
+  const showEvents    = orgSettings?.featureEvents    ?? true
+  const showPipeline  = orgSettings?.featurePipeline  ?? true
+
   const sidebar = (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto">
@@ -121,18 +127,18 @@ export default function AppLayout() {
           <SidebarLink collapsed={c} to="/"         label="Dashboard"  end  icon={<Icons.Overview />} />
           <SidebarLink collapsed={c} to="/stores"   label="All Stores"      icon={<Icons.Stores />} />
           <SidebarLink collapsed={c} to="/visits"   label="Visit Log"       icon={<Icons.Visits />} />
-          <SidebarLink collapsed={c} to="/calendar" label="Calendar"
+          {showEvents && <SidebarLink collapsed={c} to="/calendar" label="Calendar"
             badge={upcomingEvents > 0 ? String(upcomingEvents) : undefined}
             badgeVariant="muted"
             icon={<Icons.Calendar />}
-          />
+          />}
           <SidebarLink collapsed={c} to="/contacts" label="Contacts"        icon={<Icons.Contacts />} />
           <SidebarLink collapsed={c} to="/requests" label="Store Requests"
             badge={newRequests > 0 ? String(newRequests) : undefined}
             badgeVariant="red"
             icon={<Icons.Requests />}
           />
-          {isAdmin && <SidebarLink collapsed={c} to="/inventory" label="Inventory"       icon={<Icons.Inventory />} />}
+          {isAdmin && showPipeline && <SidebarLink collapsed={c} to="/inventory" label="Inventory"       icon={<Icons.Inventory />} />}
           {isAdmin && <SidebarLink collapsed={c} to="/reports"  label="Reports"         icon={<Icons.Reports />} />}
         </SidebarGroup>
 
@@ -143,6 +149,7 @@ export default function AppLayout() {
         {isAdmin && (
           <SidebarGroup collapsed={c}>
             <SidebarAccordion collapsed={c} label="Configuration" icon={<Icons.Config />} activePaths={['/admin']}>
+              <SidebarLink collapsed={c} to="/admin/setup"   label="Getting Started"  icon={<Icons.Setup />} />
               <SidebarLink collapsed={c} to="/admin/regions" label="Regions"          icon={<Icons.Markets />} />
               <SidebarLink collapsed={c} to="/admin/chains"  label="Chains"           icon={<Icons.Chains />} />
               <SidebarLink collapsed={c} to="/admin/stores"  label="Stores"           icon={<Icons.AdminStores />} />
@@ -426,6 +433,7 @@ const Icons = {
   Config:      () => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5v1.2M8 13.3v1.2M1.5 8h1.2M13.3 8h1.2M3.4 3.4l.85.85M11.75 11.75l.85.85M3.4 12.6l.85-.85M11.75 4.25l.85-.85" strokeLinecap="round"/></svg>,
   Products:    () => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1.5l6 3v7l-6 3-6-3v-7l6-3z"/><path d="M2 4.5l6 3 6-3M8 7.5V14.5"/></svg>,
   Branding:    () => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1.5a6.5 6.5 0 100 13c1.2 0 1.8-.7 1.8-1.5 0-.9-.7-1.3-.7-2 0-.8.6-1.5 1.6-1.5h1.3A2.5 2.5 0 0014.5 7 6 6 0 008 1.5z"/><circle cx="5" cy="6" r="0.9" fill="currentColor" stroke="none"/><circle cx="8.5" cy="4.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="11.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>,
+  Setup:       () => <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2.5 8.5l3.5 3.5L13.5 4" strokeLinecap="round" strokeLinejoin="round"/><path d="M14.5 8a6.5 6.5 0 11-4-6" strokeLinecap="round"/></svg>,
 }
 
 // ─── sidebar sub-components ───────────────────────────────────────────────────

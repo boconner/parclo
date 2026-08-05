@@ -423,6 +423,10 @@ model OrgSettings {
   supportEmail String?
   // Public URL of this deployment, used for links in emails.
   appUrl       String?
+  // Feature flags — off hides the feature for the whole deployment, so a
+  // lightweight customer sees a lightweight app.
+  featureEvents   Boolean @default(true)  // tastings/events calendar
+  featurePipeline Boolean @default(true)  // production→warehouse→field inventory ledger
   updatedAt    DateTime @updatedAt
 }
 
