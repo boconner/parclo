@@ -343,8 +343,8 @@ function StoreListView({
             <div className="w-12 h-12 rounded-xl bg-accent-light flex items-center justify-center flex-shrink-0">
               {activeChainId === 'independent' ? (
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                  <path d="M3 11.5L11 4l8 7.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1v-7.5z" stroke="#724fac" strokeWidth="1.5"/>
-                  <path d="M8 20v-7h6v7" stroke="#724fac" strokeWidth="1.5"/>
+                  <path d="M3 11.5L11 4l8 7.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1v-7.5z" stroke="var(--accent)" strokeWidth="1.5"/>
+                  <path d="M8 20v-7h6v7" stroke="var(--accent)" strokeWidth="1.5"/>
                 </svg>
               ) : (
                 <span className="text-lg font-bold text-accent">{activeChain.name.charAt(0)}</span>

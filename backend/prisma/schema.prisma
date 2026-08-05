@@ -417,7 +417,7 @@ model OrgSettings {
   brandName    String   @default("Parclo")
   logoUrl      String?
   // Hex accent color used across the app UI and email buttons.
-  primaryColor String   @default("#724fac")
+  primaryColor String   @default("#bf5700")
   // From-address for outbound email (must be verified with the email provider).
   fromEmail    String?
   supportEmail String?

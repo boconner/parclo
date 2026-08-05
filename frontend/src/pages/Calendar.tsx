@@ -42,7 +42,7 @@ const STATUS_META: Record<Event['status'], { label: string; bg: string; text: st
 }
 
 const EVENT_COLOR: Record<Event['status'], Record<EventType, string>> = {
-  scheduled: { tasting: '#724fac', tasking: '#2563eb', private_event: '#9333ea' },
+  scheduled: { tasting: 'var(--accent)', tasking: '#2563eb', private_event: '#9333ea' },
   completed: { tasting: '#15803d', tasking: '#15803d', private_event: '#15803d' },
   cancelled: { tasting: '#9ca3af', tasking: '#9ca3af', private_event: '#9ca3af' },
 }

@@ -505,7 +505,7 @@ export default function StoreDetails() {
             <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-gray-900">Inventory Trend</h2>
               <div className="flex items-center gap-4">
-                <LegendDot color="#724fac" label="On shelf" />
+                <LegendDot color="var(--accent)" label="On shelf" />
                 <LegendDot color="#e2e8f0" label="Sold / week" />
               </div>
             </div>
@@ -521,8 +521,8 @@ export default function StoreDetails() {
                 <ComposedChart data={trend} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
                   <defs>
                     <linearGradient id="onShelfGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#724fac" stopOpacity={0.15}/>
-                      <stop offset="95%" stopColor="#724fac" stopOpacity={0}/>
+                      <stop offset="5%"  stopColor="var(--accent)" stopOpacity={0.15}/>
+                      <stop offset="95%" stopColor="var(--accent)" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid vertical={false} stroke="#f1f5f9" />
@@ -538,11 +538,11 @@ export default function StoreDetails() {
                   />
                   <Area
                     dataKey="onShelf" name="On shelf"
-                    stroke="#724fac" strokeWidth={2}
+                    stroke="var(--accent)" strokeWidth={2}
                     fill="url(#onShelfGrad)"
                     // Dots mark real observations; the line bridges unobserved
                     // weeks, which are now spaced by actual elapsed time.
-                    dot={{ r: 2, fill: '#724fac', strokeWidth: 0 }}
+                    dot={{ r: 2, fill: 'var(--accent)', strokeWidth: 0 }}
                     connectNulls
                   />
                   <Bar dataKey="sold" name="Sold / week" fill="#e2e8f0" radius={[3, 3, 0, 0]} />

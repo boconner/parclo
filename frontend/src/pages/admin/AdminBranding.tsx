@@ -100,7 +100,7 @@ export default function AdminBranding() {
                 className={`${input} max-w-36 font-mono ${validColor ? '' : 'border-red-300'}`}
               />
             </div>
-            {!validColor && <p className="mt-1 text-xs text-red-500">Use a 6-digit hex color, e.g. #724fac</p>}
+            {!validColor && <p className="mt-1 text-xs text-red-500">Use a 6-digit hex color, e.g. #bf5700</p>}
           </div>
         </div>
 

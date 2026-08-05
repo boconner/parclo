@@ -178,7 +178,7 @@ export function AddRepModal({ open, onClose, onAdd }: AddRepModalProps) {
                         type="checkbox"
                         checked={values.regionSlugs.includes(m.slug)}
                         onChange={() => toggleRegion(m.slug)}
-                        className="w-3.5 h-3.5 rounded border-gray-300 text-accent accent-[#724fac] cursor-pointer"
+                        className="w-3.5 h-3.5 rounded border-gray-300 text-accent accent-[color:var(--accent)] cursor-pointer"
                       />
                       <span className="text-sm text-gray-700 group-hover:text-gray-900">{m.name}</span>
                     </label>

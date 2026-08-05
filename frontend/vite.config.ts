@@ -13,7 +13,7 @@ export default defineConfig({
         name: 'Parclo',
         short_name: 'Parclo',
         description: 'Retail execution — inventory & field rep management',
-        theme_color: '#724fac',
+        theme_color: '#bf5700',
         background_color: '#ffffff',
         display: 'standalone',
         // display_override lets modern browsers use the best display mode available

@@ -263,7 +263,7 @@ export function AddContactModal({ open, onClose, onSave, contact, defaultChainId
                       type="checkbox"
                       checked={values.storeIds.includes(s.id)}
                       onChange={() => toggleStore(s.id)}
-                      className="w-3.5 h-3.5 rounded border-gray-300 text-accent focus:ring-accent/20 accent-[#724fac]"
+                      className="w-3.5 h-3.5 rounded border-gray-300 text-accent focus:ring-accent/20 accent-[color:var(--accent)]"
                     />
                     <span className="text-sm text-gray-700">{s.name}</span>
                     <span className="text-xs text-gray-400 ml-auto">{s.regionName}</span>

@@ -45,7 +45,7 @@ export function DepletionChart({ regionName, data, loading }: DepletionChartProp
         </h2>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4">
-            <LegendItem color="#724fac" label="Bottles sold"   type={chartType} />
+            <LegendItem color="var(--accent)" label="Bottles sold"   type={chartType} />
             <LegendItem color="#e2e8f0" label="Orders placed"  type={chartType} />
           </div>
           <ChartToggle value={chartType} onChange={setChartType} types={['bar', 'line']} />
@@ -72,7 +72,7 @@ export function DepletionChart({ regionName, data, loading }: DepletionChartProp
               <XAxis dataKey="week" tick={AXIS_TICK} axisLine={false} tickLine={false} />
               <YAxis hide />
               <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: '#f8f9fb' }} />
-              <Bar dataKey="sold"    name="Bottles sold"   fill="#724fac" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="sold"    name="Bottles sold"   fill="var(--accent)" radius={[3, 3, 0, 0]} />
               <Bar dataKey="ordered" name="Orders placed"  fill="#e2e8f0" radius={[3, 3, 0, 0]} />
             </BarChart>
           ) : (
@@ -81,8 +81,8 @@ export function DepletionChart({ regionName, data, loading }: DepletionChartProp
               <XAxis dataKey="week" tick={AXIS_TICK} axisLine={false} tickLine={false} />
               <YAxis hide />
               <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ stroke: '#e2e8f0' }} />
-              <Line dataKey="sold"    name="Bottles sold"  stroke="#724fac" strokeWidth={2} dot={{ r: 3, fill: '#724fac' }} activeDot={{ r: 5 }} />
-              <Line dataKey="ordered" name="Orders placed" stroke="#c4aee0" strokeWidth={2} dot={{ r: 3, fill: '#c4aee0' }} activeDot={{ r: 5 }} strokeDasharray="4 3" />
+              <Line dataKey="sold"    name="Bottles sold"  stroke="var(--accent)" strokeWidth={2} dot={{ r: 3, fill: 'var(--accent)' }} activeDot={{ r: 5 }} />
+              <Line dataKey="ordered" name="Orders placed" stroke="#94a3b8" strokeWidth={2} dot={{ r: 3, fill: '#94a3b8' }} activeDot={{ r: 5 }} strokeDasharray="4 3" />
             </LineChart>
           )}
         </ResponsiveContainer>
@@ -99,7 +99,7 @@ function LegendItem({ color, label, type }: { color: string; label: string; type
         <div className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: color }} />
       ) : (
         <svg width="16" height="8" viewBox="0 0 16 8" fill="none" className="flex-shrink-0">
-          <line x1="0" y1="4" x2="16" y2="4" stroke={color === '#e2e8f0' ? '#c4aee0' : color} strokeWidth="2" strokeLinecap="round" strokeDasharray={color === '#e2e8f0' ? '4 3' : undefined} />
+          <line x1="0" y1="4" x2="16" y2="4" stroke={color === '#e2e8f0' ? '#94a3b8' : color} strokeWidth="2" strokeLinecap="round" strokeDasharray={color === '#e2e8f0' ? '4 3' : undefined} />
         </svg>
       )}
       {label}

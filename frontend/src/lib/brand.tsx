@@ -14,7 +14,7 @@ export interface BrandInfo {
 export const DEFAULT_BRAND: BrandInfo = {
   brandName:    'Parclo',
   logoUrl:      null,
-  primaryColor: '#724fac',
+  primaryColor: '#bf5700',
 }
 
 const STORAGE_KEY = 'brand'

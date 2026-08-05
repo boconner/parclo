@@ -17,7 +17,7 @@ const ACTION_STYLE: Record<Action, { bg: string; icon: React.ReactNode; verb: st
   'order-placed': {
     bg: 'bg-accent-light',
     verb: 'Order placed',
-    icon: <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="8" rx="1.5" stroke="#724fac" strokeWidth="1.3"/><path d="M3.5 5h5M3.5 7h3" stroke="#724fac" strokeWidth="1.1" strokeLinecap="round"/></svg>,
+    icon: <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="8" rx="1.5" stroke="var(--accent)" strokeWidth="1.3"/><path d="M3.5 5h5M3.5 7h3" stroke="var(--accent)" strokeWidth="1.1" strokeLinecap="round"/></svg>,
   },
   'issue-reported': {
     bg: 'bg-red-50',

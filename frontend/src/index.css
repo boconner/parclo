@@ -9,10 +9,10 @@
 /* Accent theme — defaults match DEFAULT_BRAND in lib/brand.tsx; overridden at
    runtime from OrgSettings.primaryColor. */
 :root {
-  --accent: #724fac;
-  --accent-rgb: 114 79 172;
-  --accent-light: #f3eef9;
-  --accent-hover: #5f3f93;
+  --accent: #bf5700;
+  --accent-rgb: 191 87 0;
+  --accent-light: #faf2eb;
+  --accent-hover: #9f4800;
 }
 
 @layer base {

@@ -16,6 +16,9 @@ const inDays = (n: number, hour = 17) => {
   return t
 }
 
+/** Matches OrgSettings.brandName's schema default — i.e. "never configured". */
+const DEFAULT_BRAND_NAME = 'Parclo'
+
 /** Host and database name of the target, with credentials stripped. */
 function targetDescription(): string {
   const url = process.env.DATABASE_URL
@@ -226,19 +229,27 @@ async function main() {
   }
 
   // ── Demo branding ─────────────────────────────────────────────────────────
-  // A fictional brand so the demo shows the white-label story, not Parclo
-  // defaults. Create-only: anything changed later in Configuration → Branding
-  // survives a re-seed.
-  await prisma.orgSettings.upsert({
-    where:  { id: 'default' },
-    update: {},
-    create: {
-      id: 'default',
-      brandName:    'Solstice Spirits',
-      primaryColor: '#0f766e',
-      supportEmail: 'hello@solstice.example.com',
-    },
-  })
+  // A fictional brand so the demo shows the white-label story, not the Parclo
+  // defaults. Applied when the row is missing OR still untouched — reading
+  // /api/brand creates a default row, so create-only would silently skip on any
+  // instance that had been opened once. Real branding is never overwritten.
+  const demoBrand = {
+    brandName:    'Solstice Spirits',
+    primaryColor: '#0f766e',
+    supportEmail: 'hello@solstice.example.com',
+  }
+  const existingSettings = await prisma.orgSettings.findUnique({ where: { id: 'default' } })
+  const untouched = !existingSettings
+    || (existingSettings.brandName === DEFAULT_BRAND_NAME && existingSettings.logoUrl === null)
+  if (untouched) {
+    await prisma.orgSettings.upsert({
+      where:  { id: 'default' },
+      update: demoBrand,
+      create: { id: 'default', ...demoBrand },
+    })
+  } else {
+    console.log(`Kept existing branding "${existingSettings!.brandName}".`)
+  }
 
   console.log('Done.')
 }

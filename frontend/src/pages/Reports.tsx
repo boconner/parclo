@@ -25,7 +25,7 @@ import { useBrand } from '@/lib/brand'
 // ─── constants ────────────────────────────────────────────────────────────────
 
 const PIE_PALETTE = [
-  '#724fac', '#a07fd4', '#c4aee0', '#e0d4f3', '#5f3f93', '#9b6dd4', '#d4b8f0',
+  'var(--accent)', '#e07b2c', '#8c3d00', '#f0a868', '#a34e00', '#c98d5e', '#5e2a00',
   '#4a3080', '#b38ee0', '#e8d9f7', '#8f5cc0', '#3d2b6e',
 ]
 const URGENCY_COLORS = { critical: '#ef4444', low: '#f59e0b', good: '#10b981' }
@@ -577,7 +577,7 @@ export default function Reports() {
                     <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e8eaed', borderRadius: 8, fontSize: 12 }} cursor={{ fill: '#f8fafc' }} />
                     <Bar dataKey="count" name="Visits" radius={[3, 3, 0, 0]}>
                       {activity.weeklyTrend.map((_, i) => (
-                        <Cell key={i} fill={i === activity.weeklyTrend.length - 1 ? '#724fac' : '#ede6f5'} />
+                        <Cell key={i} fill={i === activity.weeklyTrend.length - 1 ? 'var(--accent)' : 'var(--accent-light)'} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -984,7 +984,7 @@ export default function Reports() {
                       <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e8eaed', borderRadius: 8, fontSize: 12 }} cursor={{ fill: '#f8fafc' }} />
                       <Bar dataKey="count" name="Visits" radius={[4, 4, 0, 0]}>
                         {activity.weeklyTrend.map((_, i) => (
-                          <Cell key={i} fill={i === activity.weeklyTrend.length - 1 ? '#724fac' : '#ede6f5'} />
+                          <Cell key={i} fill={i === activity.weeklyTrend.length - 1 ? 'var(--accent)' : 'var(--accent-light)'} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -994,7 +994,7 @@ export default function Reports() {
                       <XAxis dataKey="week" tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                       <YAxis tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} allowDecimals={false} />
                       <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e8eaed', borderRadius: 8, fontSize: 12 }} cursor={{ stroke: '#e2e8f0' }} />
-                      <Line dataKey="count" name="Visits" stroke="#724fac" strokeWidth={2} dot={{ r: 4, fill: '#724fac' }} activeDot={{ r: 6 }} />
+                      <Line dataKey="count" name="Visits" stroke="var(--accent)" strokeWidth={2} dot={{ r: 4, fill: 'var(--accent)' }} activeDot={{ r: 6 }} />
                     </LineChart>
                   )}
                 </ResponsiveContainer>
@@ -1133,7 +1133,7 @@ export default function Reports() {
                     <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#6b7280' }} axisLine={false} tickLine={false} width={76} />
                     <Tooltip contentStyle={{ background: '#fff', border: '1px solid #e8eaed', borderRadius: 8, fontSize: 12 }} cursor={{ fill: '#f8fafc' }} />
                     <Bar dataKey="completed" name="Completed" stackId="a" fill="#15803d" radius={[0, 0, 0, 0]} />
-                    <Bar dataKey="total" name="Total"     stackId="b" fill="#ede6f5" radius={[3, 3, 3, 3]} />
+                    <Bar dataKey="total" name="Total"     stackId="b" fill="var(--accent-light)" radius={[3, 3, 3, 3]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
