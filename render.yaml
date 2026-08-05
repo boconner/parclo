@@ -12,7 +12,9 @@ services:
     plan: free
     runtime: node
     rootDir: backend
-    buildCommand: npm install && ./node_modules/.bin/prisma generate && npm run typecheck
+    # --include=dev is required: NODE_ENV=production makes npm skip
+    # devDependencies, and the typecheck below needs typescript + @types/node.
+    buildCommand: npm install --include=dev && ./node_modules/.bin/prisma generate && npm run typecheck
     startCommand: ./node_modules/.bin/prisma db push --accept-data-loss && npm start
     healthCheckPath: /api/health
     envVars:
