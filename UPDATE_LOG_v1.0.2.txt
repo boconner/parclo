@@ -1,0 +1,98 @@
+========================================================
+  CONTENTO — UPDATE LOG
+  Since Version 1.0.1  |  May 12–15, 2026
+========================================================
+
+This document summarizes all improvements, new features,
+and bug fixes delivered since the last version release.
+
+--------------------------------------------------------
+  NEW FEATURES
+--------------------------------------------------------
+
+REP MANAGEMENT
+  - Rep detail page: tap any rep to view their profile,
+    assigned region(s), store count, and a direct call link
+  - Phone number field added to rep profiles
+  - Reps can now be assigned to multiple regions at once;
+    admins can edit region access from the rep list
+  - Invite reps directly from the Team page via email —
+    they receive a sign-in link and are linked to their
+    rep profile automatically on first login
+  - Visit attribution is now seamless: when a rep logs a
+    visit, it is automatically tied to their account
+
+STORE MANAGEMENT
+  - Edit Store modal: all fields pre-fill from saved data;
+    address field added (shown on store detail page)
+  - Independent stores (not affiliated with a chain) now
+    appear correctly in the store browser
+  - Edit Store button moved to the main header for easier
+    access on the store detail page
+
+TASTING EVENTS / CALENDAR
+  - Tastings are now fully live: schedule events, assign
+    reps, and view them on the calendar — all saved to
+    the database
+  - Tastings now appear on the store detail page
+  - End time added to tasting events
+  - Calendar events can be deleted directly from the calendar
+  - Tastings can be scheduled on past dates (for logging
+    events that already occurred)
+  - Page renamed from "Tasting Calendar" to "Calendar"
+
+VISIT LOG
+  - Reps see only their own name when logging a visit;
+    admins see a dropdown to log on behalf of any rep
+
+CONTACTS
+  - Contact edit modal now pre-fills all existing details
+    and correctly saves store associations
+  - Rep role field is now optional — only a name is required
+    to create a contact
+
+DASHBOARD FILTERS
+  - "All Regions" filter now highlights to clearly show
+    when all regions are selected
+
+--------------------------------------------------------
+  BACKEND / DATABASE
+--------------------------------------------------------
+  - All screens (dashboard, store detail, visits, orders,
+    reports, trend chart) are now connected to the real
+    database — no more placeholder data
+  - Supplier orders, depletion trend charts, and report
+    exports all pull live data
+  - Region-based data scoping: reps only see stores in
+    their assigned region(s)
+
+--------------------------------------------------------
+  NAVIGATION & UI POLISH
+--------------------------------------------------------
+  - Admin menu replaced with a "Configuration" item in
+    the sidebar; collapses neatly and shows a flyout
+    when the sidebar is minimized
+  - Table horizontal scrolling fixed on mobile and tablet
+    screens throughout the app
+  - Calendar page layout fixed for mobile
+  - General polish: smoother modals, cleaner form flows
+
+--------------------------------------------------------
+  BUG FIXES
+--------------------------------------------------------
+  - Fixed blank screen when navigating back from a store
+    detail page
+  - Fixed app crashes on stores with no chain or rep assigned
+  - Fixed tasting events not saving when scheduled from
+    the Visits page
+  - Fixed store address not saving or re-populating in the
+    edit modal
+  - Fixed reps list returning empty in certain cases
+  - Fixed region filter not applying correctly on the
+    tastings screen
+  - Fixed rep store count displaying incorrectly in the
+    region assignment view
+
+========================================================
+  Questions or feedback? Contact your project team.
+========================================================

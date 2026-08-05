@@ -1,0 +1,416 @@
+CONTENTO — CHANGELOG
+====================
+Full history from initial commit to present, grouped by date.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-04-27  fc67dde  Initial commit
+════════════════════════════════════════════════════════════════════════════════
+- Project scaffolded: React + TypeScript + Vite frontend, Express + Prisma
+  backend, TailwindCSS, React Router, TanStack Query, Recharts, Mapbox GL.
+- Full UI built with mock data across all pages: Dashboard, Stores, Store
+  Detail, Visits, Calendar, Reports, Contacts, Team, Admin (Chains/Stores/Reps).
+
+════════════════════════════════════════════════════════════════════════════════
+2026-04-29  dd6b39a – b72d5c3  Render deployment + Prisma stabilisation
+════════════════════════════════════════════════════════════════════════════════
+- Added render.yaml for Render.com deployment (static frontend + Node backend).
+- Fixed static site type declaration in render.yaml.
+- Fixed Prisma 7 datasource config and import path issues.
+- Added explicit `prisma generate` step; moved to `db push` for schema sync.
+- Switched backend to ESM (type: module) for Prisma 7 client compatibility.
+- Downgraded to Prisma 5 (prisma-client-js) after Prisma 7 proved incompatible
+  with the deployment environment.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-04 – 2026-05-05  9d87887 – 8e6bed3  Backend API + mock data removal
+════════════════════════════════════════════════════════════════════════════════
+- Built out store orders and supplier orders pages with full UI.
+- Added order reports tab and Place Order modals.
+- Added Markets admin page (CRUD for regions/markets).
+- Connected all frontend pages to real backend API endpoints with mock
+  fallbacks for resilience during transition.
+- Migrated all pages (Dashboard, StoreDetails, Stores, Visits, Reports,
+  Contacts, Admin) to use TanStack Query hooks against the live API.
+- Pinned Prisma to v5 to resolve schema incompatibility.
+- Set VITE_API_URL for production build; used local Prisma CLI on Render.
+- Removed all mock data fallbacks — app now requires a live backend.
+- Fixed remaining mock data references in admin pages and ContactDetail.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-06  6582f8a – deb6d20  Auth, admin CRUD, and cleanup
+════════════════════════════════════════════════════════════════════════════════
+- Removed hardcoded fake names from UI.
+- Fixed hooks-after-return crash in StoreDetails; fixed PWA icon 404.
+- Wired up store deletion end-to-end (frontend + backend cascade).
+- Wired full delete and add for all admin entities (chains, reps, stores,
+  regions, contacts).
+- Added error toasts to all delete mutations for user feedback.
+- Added Clerk authentication and role-based access control (admin vs rep).
+- Added delete button to contacts list page.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-07  ef555e1 – 960c2de  Auth polish
+════════════════════════════════════════════════════════════════════════════════
+- Show error when Clerk sign-in returns non-complete status.
+- Fixed post-login navigation with hard redirect + afterSignInUrl.
+- Fixed backend Clerk config: added health check before middleware,
+  added CLERK_PUBLISHABLE_KEY.
+- Replaced custom login form with official Clerk SignIn component.
+- Added error toasts for Add Chain / Add Market failures.
+- Removed slug display from Add Market modal and markets table.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-08  afe683c – ffa42c0  Auth hardening
+════════════════════════════════════════════════════════════════════════════════
+- Return 401 instead of 500 when Clerk token verification fails.
+- Fixed 401 errors by reading Clerk token from global singleton at request
+  time rather than at middleware registration time.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-11 – 2026-05-12  0ad5a3f – 41af9c2  Branding, UX polish, v1.0.1
+════════════════════════════════════════════════════════════════════════════════
+- Updated login footer: "Powered by ParClo".
+- Added in-app change password modal (Clerk-backed).
+- Moved user actions (change password, sign out) into an avatar dropdown.
+- Hid sign-up link on login page.
+- Added version number to sidebar footer.
+- Renamed Market → Region throughout the full app (frontend + backend +
+  database schema + all admin labels and table headers).
+- Fixed TypeScript build errors from the rename.
+- Removed all remaining hardcoded mock data from the frontend.
+- Fixed PWA standalone layout for mobile home screen (iOS + Android).
+- Made chain and rep optional when adding a store.
+- Always show table action buttons (previously revealed on hover only).
+- Removed "Required fields" footer note from Add Store modal.
+- Fixed crashes on stores with no chain or rep assigned.
+- Added Edit Store modal; fixed null rep crash in Visits page.
+- Showed independent stores (no chain assigned) in the store browser.
+- Fixed TypeScript build error in AddStoreModal.
+- Moved Edit Store button to main header action row.
+- Fixed blank screen when navigating back from store detail.
+- Bumped version to 1.0.1.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-13  aea0a3c – 34772ad  Navigation revamp + tastings + store edit
+════════════════════════════════════════════════════════════════════════════════
+- Replaced the Admin sidebar section with a collapsible "Configuration"
+  menu item; shows flyout on hover when sidebar is collapsed.
+- Wired Log Visit to API so rep links correctly on visit creation.
+- Connected Reps to Clerk users for seamless visit attribution.
+- Locked rep field to the current user in LogVisitModal; admins see a
+  full rep dropdown.
+- Built out tastings: backend routes, Clerk-Rep linking, live calendar.
+- Fixed ScheduleTastingModal in Visits page never calling the API.
+- Renamed "Tasting Calendar" page heading to "Calendar".
+- Showed tastings on store detail page.
+- Fixed Calendar page mobile layout.
+- Pre-filled all fields in Edit Store modal.
+- Allowed scheduling tastings on past dates.
+- Added address field to stores; visible on detail page.
+- Fixed address not saving or repopulating in Edit Store modal.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-14  20b8a9b – 7066ef8  Full DB connectivity
+════════════════════════════════════════════════════════════════════════════════
+- Wired all remaining UI to real database data — no hardcoded stubs remain.
+- Completed DB connectivity for supplier orders, trend chart, reports,
+  visit stats, and order stats.
+- Wired contact edit modal: pre-fill fields and persist storeIds.
+- Made role optional for contacts (only name is required).
+- Fixed horizontal scroll on tables for mobile/tablet.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-15  bf86746 – 2be9bc9  Rep management + region access + UI fixes
+════════════════════════════════════════════════════════════════════════════════
+- UI polish: end time for tastings, deletable calendar events, table scroll.
+- Fixed TypeScript 6 build errors and rep dropdown placeholder.
+- Added Clerk invite flow to rep management (invite by email).
+- Fixed Map import shadowing JavaScript built-in in MarketMap.
+- Fixed broken JSX in AdminStores from stray closing div.
+- Added rep detail view, tap-to-call link, and phone field.
+- Fixed reps API returning empty: replaced omit+include with explicit select.
+- Added rep region assignment: multi-region access, edit modal, backend
+  scoping so reps only see stores in their assigned regions.
+- Audit fixes: tastings region filter, rep store count by ID.
+- Highlighted all region filters when "All" is selected.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-18  d786c32 – de4841c  Events system overhaul
+════════════════════════════════════════════════════════════════════════════════
+- Overhauled tastings into a generic Events system with multiple types
+  (tasting, tasking, private event) and structured closeout notes
+  (takeaways, accomplishments).
+- Fixed Prisma db push to accept data loss on deploy.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-19  486722a – f365067  Store health, bulk import, visit editing
+════════════════════════════════════════════════════════════════════════════════
+- Fixed React hook violation in StoreDetails (useMemo above early return).
+- Fixed invite 400 error from Clerk (empty redirectUrl).
+- Fixed event delete to remove EventRep join records first.
+- Fixed modals not dismissing after save (optimistic close before mutation).
+- Made store status prominent: colored left stripe + Status pill in column 2.
+- Stronger row hover color and consistent status treatment in StoreTable.
+- Fixed status not updating when bottles hit 0; recalculated daysOfSupply
+  on visit; added onShelf fallback to statusVariant.
+- Auto-calculated depletionRate and daysOfSupply from consecutive visits:
+  rate = (prev_onShelf − curr_onShelf) / days_between; days = onShelf / rate.
+- Made store names clickable links in Contacts list and Calendar event detail.
+- Added bulk import for chains, stores, and contacts from CSV/Excel files.
+- Import: address geocoding, split address fields, removed lat/lng columns.
+  Renamed "Store Management" to "Stores" in admin nav.
+- Expanded Low Stock notification bell to include both critical (≤3) and
+  needs-attention (4) stores.
+- Added visit edit and delete: tap any visit log entry to view, edit, or
+  delete it.
+- Visit log UX: clear edit affordance, fixed isDirty detection, better
+  delete button.
+- Removed events from Visit Log — shows visits only.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-20  feb972a – 6b9c0db  Event UX + workflow revamp + map pins
+════════════════════════════════════════════════════════════════════════════════
+- Added event titles, modal detail view, and search bar on Calendar.
+- Added hours worked and closed-by tracking to event close-out.
+- Fixed TS error: removed stale typeFilter from Visits useMemo deps.
+- Removed title from event creation; added takeaways + accomplishments
+  to close-out form.
+- Fixed calendar events not tappable on mobile.
+- Fixed contacts not persisting to backend from store detail page.
+- Workflow revamp: "Log Visit" replaces the old "Close Out Event" paradigm.
+  A single modal now handles visits, tastings, and event close-outs.
+- Renamed buttons throughout to "+ Log" and "+ Schedule".
+- Fixed stray SVG icon in Dashboard Log button.
+- Log visit UX: moved linked event above store selector; renamed "General"
+  to "Visit".
+- Fixed crash on visits with no action or logType in StoreDetails.
+- Map pins now reflect bottle count status (critical/low/good) instead of
+  days of supply.
+- Added Private Event log type; removed bottles sold from standard visit log.
+- Fixed TS errors for private_event EVENT_COLOR and useUpdateEvent types.
+- Log modal: Private Event type with type-matched event dropdown.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-21  b772fc3 – d481009  Inventory accuracy, alerts, training guide, v1.0.2
+════════════════════════════════════════════════════════════════════════════════
+- Fixed inventory accuracy: live daysOfSupply on every visit, delivered
+  order sync, backend access control, reports wired to real data.
+- Standardised inventory thresholds: ≤3 = critical, 4 = needs attention,
+  5+ = good (consistent across all pages and alerts).
+- Moved inventory alerts (critical stores, needs attention) to the header
+  notification bell; removed them from the main dashboard body.
+- Added rep training guide PDF (branded as Parclo / Contento).
+- Audit fixes: mandatory hours worked, admin-only dashboard sections,
+  alert cleanup.
+- Bumped version to 1.0.2; updated training guide accordingly.
+- Training guide updates: Parclo attribution, setup instructions, app URL,
+  platform vs brand clarification, private party examples, removed order
+  references.
+- Hid Orders sidebar section for non-admins.
+- Fixed store delete: replaced stale tasting/tastingRep model references
+  with event/eventRep.
+- EditRepModal: reconciled primary region and region access controls.
+- Added consistent Edit + Delete buttons across all admin tables.
+- Linked admin config tables for easier navigation: Regions → Chains → Stores.
+- Added EditStoreModal: Edit button opens inline modal instead of navigating.
+- Removed neighborhood/area field from stores entirely (API, import, schema).
+- Redesigned AdminStores, AdminReps, and all admin tables to a consistent
+  layout and style.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-22  ad14f44 – a4b0e8b  Admin filters, visit delete, Rep Activity report
+════════════════════════════════════════════════════════════════════════════════
+- Fixed store creation failing due to leftover required area field.
+- Added rep and clear-all filters to AdminStores; showed filtered count.
+- Added View button to AdminStores to match AdminReps.
+- Removed Bottles Sold from Schedule Event modal (moved to close-out only).
+- Removed visit delete from all pages (StoreDetails, Visits, LogVisitModal) —
+  delete was restored in a later commit (35d7c88) after design review.
+- Added Bottles Sold to log visit modal for private events and tastings only.
+- Added Rep Activity report tab with hours worked and bottles sold per rep.
+- Hid cancelled events from store detail page events list.
+- Fixed visit delete to correctly roll back store stats (onShelf, lastVisit,
+  depletionRate) and clean up linked event (delete if auto-created, revert
+  to scheduled if pre-existing).
+- Added rep filter to Events and Rep Activity report tabs.
+- Fixed three bugs: hours double-counting in combined rep stats, dead code
+  removal, and event status not reverting on visit delete.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-23  c3dd786  UX/workflow improvements
+════════════════════════════════════════════════════════════════════════════════
+- Log visit directly from Calendar event detail (no separate modal needed).
+- Added chain and region filters to Reports page.
+- Rep Activity report polished with better sorting and column layout.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-26  0a0824c – f99d47e  Bottles sold, supply requests, time pickers
+════════════════════════════════════════════════════════════════════════════════
+- Added bottles sold to tasting log and private event close-out form.
+- Showed bottles sold field in edit visit mode for all log types.
+- Added supply request feature: rep taps "Request Supplies" on a scheduled
+  event to email an alert to the admin with event details, items needed,
+  urgency, need-by date, and rep contact info.
+- Supply request: added need-by date, rep phone, rep email to form and email.
+- Replaced hours-worked number input with 12-hour time in/time out pickers
+  that auto-calculate hours worked.
+- Supply request: included event title in email subject and body.
+- Reorganised calendar event detail action buttons for clarity.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-27  5c750d7 – 23de0ac  Bug fixes and rep management
+════════════════════════════════════════════════════════════════════════════════
+- Time pickers: fixed edge cases, added visit delete re-enable, event delete
+  confirmation dialog.
+- UX heuristic fixes (high/medium/low severity): form validation, empty
+  states, modal sizing, button consistency.
+- Fixed two HIGH bugs: timeIn not pre-populating in edit mode, and bottlesSold
+  data loss when editing a visit.
+- Rep management: restored all-regions toggle, multi-region select, and made
+  phone field optional.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-28  36bc631 – d5f2b12  Stores filter, chart fixes, inventory redesign
+════════════════════════════════════════════════════════════════════════════════
+- Stores page now shows all stores by default; filters narrow the list
+  (previously required an active filter to see stores).
+- Fixed chart toggle re-render bug in Reports; aligned Visit Log table style
+  to match Stores page.
+- Hid Orders feature entirely (nav, routes, and Reports tab).
+- Added sell-through tracker: cases out vs on-shelf depletion with %, cases
+  made, cases deployed, cases on shelf, estimated sell-through.
+- Persisted sell-through casesOut in the database via a Settings model.
+- Redesigned inventory tracker: full warehouse → field → sold-through
+  lifecycle with progress bar, stat blocks, and reorder alert.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-05-29  33f905f – a3e35b5  Inventory build-out
+════════════════════════════════════════════════════════════════════════════════
+- Added retry backoff to inventory config query for Clerk init timing.
+- Fixed inventory 403: opened writes to managers (allRegions flag);
+  added audit log and delete for deployment records.
+- Fixed Render build: added --accept-data-loss to prisma db push.
+- Rethought inventory model: Off Shelf vs Sold — added manual sales entries
+  from distributor reports as a distinct bucket.
+- Added chain allocation to field deployments (bulk ship to a chain).
+- Added inline edit to Stock Log entries (quantity, date, notes).
+- Added store-level (direct) deployments for independent stores.
+- Added inventory reset endpoint and Reset All button in Stock Log.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-01  7b9a7dd  Rep deployments + bottles-first display
+════════════════════════════════════════════════════════════════════════════════
+- Added rep-level deployments: cases handed to a rep to carry and deliver.
+- Flipped inventory tracker to bottles-first display (with cases secondary).
+- Breakdown by chain, rep, and store now shown in the tracker.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-02  965e12e – 2c1c468  Add Store fixes + dark mode
+════════════════════════════════════════════════════════════════════════════════
+- Fixed chain toggle in Add Store: clicking the selected chain now deselects.
+- Fixed rep deselect in Add Store: rep is optional so empty option is not
+  disabled.
+- Added dark mode with sidebar toggle; full dark theme via CSS overrides.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-03  1afff5f – 8a4c6f1  Inventory pre-session cleanup
+════════════════════════════════════════════════════════════════════════════════
+- Tied inventory into visits: cases delivered at a visit auto-create a
+  FieldDeployment record; clarified Sales vs Depletions vs Event Sales.
+- Moved inventory tracker to a dedicated /inventory page (admin-only).
+- Hid Log Depletions button — not applicable without distributor reports.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-03  c930b5b  Warehouse transfers log table
+════════════════════════════════════════════════════════════════════════════════
+- Added Warehouse Transfers audit log table to Inventory page (between
+  Production Runs and Field Deployments). Full inline edit and delete.
+- Fixed saveEdit: transfer rows now correctly send transferredAt to the API
+  instead of falling through to soldAt.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-03  fd71a93  Reports Inventory tab + Dashboard strip + rep deploy
+════════════════════════════════════════════════════════════════════════════════
+Reports — new Inventory tab (between Overview and Visits):
+- 4-segment flow bar: Warehouse / On-Hand / On Shelf / Off Shelf with %.
+- 6-stat grid: total made, warehouse, on-hand, deployed, ~on-shelf, off-shelf.
+- Velocity, weeks-of-supply, reorder date, event sales summary line.
+- Reorder alert banner when on-hand supply is below lead time.
+- Sortable By Chain, By Market, and By Rep tables with PDF export.
+
+Dashboard — inventory snapshot strip (admin only):
+- Compact one-line strip below stat cards: on-hand, deployed, ~on-shelf,
+  off-shelf, velocity. Turns red with reorder warning when critical.
+- "View inventory →" link.
+
+StoreDetails — Deploy Cases button (all users including reps):
+- Inline form: quantity + notes → creates a FieldDeployment for that store.
+
+Backend — loosened deploy permission:
+- Reps can now POST /inventory/deployments when storeId is provided.
+- Without storeId the 403 still fires (no bulk/chain-level deploys for reps).
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-03  28642e5  Fix 7 audit bugs
+════════════════════════════════════════════════════════════════════════════════
+1. warehouseWeeksLeft falls back to casesInWarehouse when onHandCases=0 so
+   the reorder alert fires even before the first warehouse transfer.
+2. reorderDate is now null when the alert is already firing (was a past date).
+3. Warehouse transfer POST validates quantity ≤ available warehouse balance;
+   frontend caps input and disables the Pull button on excess.
+4. By Market "~On Shelf" sort fixed — wrong field name (casesOnShelf →
+   bottlesOnShelf).
+5. Reports Overview progress bar now has 4 segments (was missing on-hand).
+6. Stat label corrected: "Warehouse Supply" → "On-Hand Supply".
+7. Removed dead deriveInventoryStats export with stale warehouse formula.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-03  a996507  Legibility: small grey text
+════════════════════════════════════════════════════════════════════════════════
+- text-[10px] → 12 px via CSS override; affected 191 occurrences in 29 files.
+- text-gray-400 → #6b7280 (gray-500): contrast on white improved from
+  ~3.5:1 to ~5.4:1 (WCAG AA). Dark-mode override unaffected.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-03  c3447d0  PWA fixes
+════════════════════════════════════════════════════════════════════════════════
+- Generated proper square icons from the 2560×991 landscape logo:
+  icon-192.png, icon-512.png (white bg, 70% width), icon-512-maskable.png
+  (accent bg, 55% width for adaptive icon safe zone).
+- Split combined purpose "any maskable" into two separate icon entries.
+- Added display_override: ["standalone", "minimal-ui"].
+- Added shortcuts (Log Visit, Calendar) for Android long-press.
+- Fixed apple-touch-icon to use the square icon.
+- Added scripts/gen-icons.mjs for future icon regeneration.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-04  b173d94  Visit action field + rep daily view + follow-up alerts
+════════════════════════════════════════════════════════════════════════════════
+Item 1 — Visit action field:
+- Log Visit modal now shows a 2×2 action chip picker for all non-private
+  logs: Stocked shelf / Checked in / Issue reported / Order placed (optional).
+- Action saved by backend on both POST and PATCH /visits.
+- LOW_STOCK_REP alerts auto-resolve when onShelf > 4 is logged.
+
+Item 2 — Rep daily view:
+- Reps see a personalised Dashboard section instead of the admin view:
+  quick stats (My Stores, Need Attention, Overdue Visits, My Events),
+  Needs Attention grid, All My Stores list sorted by urgency.
+- RepStoreCard: bottles on shelf, days of supply, days since last visit,
+  one-tap Log button per store.
+- Map and Store Table filtered to the rep's own stores.
+- Accounts not linked to a rep profile show a clear admin notice.
+
+Item 3 — Need Follow-Up as actionable list:
+- StatCard gains optional onClick prop with hover treatment.
+- Admin "Need Follow-Up" stat card opens a modal listing overdue stores
+  (not visited in 10+ days), sorted by most-overdue, with a Log button each.
+
+════════════════════════════════════════════════════════════════════════════════
+2026-06-09  1868250  Fix independent chain filter label
+════════════════════════════════════════════════════════════════════════════════
+- ChainBar was bucketing stores with chainId=null under a null key and
+  rendering a blank chip label (just a number, no name).
+- null chainId now maps to key "independent" / label "Independent".
+- Dashboard chainStores filter handles "independent" by matching
+  stores where chainId === null.

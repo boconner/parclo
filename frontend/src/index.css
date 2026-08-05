@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import 'mapbox-gl/dist/mapbox-gl.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+ 
+@layer base {
+  * { box-sizing: border-box; }
+  html {
+    overscroll-behavior: none;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-color: #f8f9fb;
+    color: #111827;
+    overscroll-behavior: none;
+  }
+}
+ 
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .safe-top    { padding-top:    env(safe-area-inset-top);    }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .touch-pan-x { touch-action: pan-x; }
+
+  /* Legibility: treat the 10 px micro-label size as 12 px (text-xs) app-wide */
+  .text-\[10px\] { font-size: 0.75rem; line-height: 1rem; }
+
+  /* Contrast: gray-400 (#9ca3af, ~3.5:1 on white) → gray-500 (#6b7280, ~5.4:1).
+     Dark-mode override at line 77 is unaffected (higher specificity). */
+  .text-gray-400 { color: #6b7280; }
+}
+
+/* ─── Dark mode ─────────────────────────────────────────────────────────────
+   html.dark .class selectors have specificity (0,2,1) — one element + two
+   classes — which beats Tailwind utility specificity (0,1,0), so these win
+   the cascade without !important. Placed outside @layer to preserve order.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+html.dark body {
+  background-color: #0c1220;
+  color: #f1f5f9;
+}
+
+/* Layout shells (targeted via custom classes in AppLayout) */
+html.dark .dm-navbar  { background-color: #111827; border-color: #1e293b; }
+html.dark .dm-sidebar { background-color: #0c1220; border-color: #1a2540; }
+
+/* Surfaces */
+html.dark .bg-white    { background-color: #1a2540; }
+html.dark .bg-gray-50  { background-color: #0c1220; }
+html.dark .bg-gray-100 { background-color: #1e293b; }
+html.dark .bg-gray-200 { background-color: #2d3f55; }
+
+/* Opacity surfaces */
+html.dark .bg-gray-50\/50  { background-color: rgba(12, 18, 32, 0.5); }
+html.dark .bg-gray-50\/70  { background-color: rgba(12, 18, 32, 0.7); }
+html.dark .bg-white\/90    { background-color: rgba(26, 37, 64, 0.9); }
+
+/* Borders */
+html.dark .border-gray-100 { border-color: #1a2540; }
+html.dark .border-gray-200 { border-color: #2d3f55; }
+
+/* Dividers (Tailwind divide-* targets siblings) */
+html.dark .divide-gray-50  > :not([hidden]) ~ :not([hidden]) { border-color: #1a2540; }
+html.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: #1e293b; }
+html.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: #2d3f55; }
+
+/* Text */
+html.dark .text-gray-900 { color: #f1f5f9; }
+html.dark .text-gray-800 { color: #e2e8f0; }
+html.dark .text-gray-700 { color: #cbd5e1; }
+html.dark .text-gray-600 { color: #94a3b8; }
+html.dark .text-gray-500 { color: #64748b; }
+html.dark .text-gray-400 { color: #475569; }
+html.dark .text-gray-300 { color: #2d3f55; }
+html.dark .text-gray-200 { color: #1e293b; }
+
+/* Hover backgrounds */
+html.dark .hover\:bg-gray-50:hover        { background-color: #1e293b; }
+html.dark .hover\:bg-gray-100:hover       { background-color: #2d3f55; }
+html.dark .hover\:bg-gray-50\/70:hover    { background-color: rgba(30, 41, 59, 0.7); }
+
+/* Hover text */
+html.dark .hover\:text-gray-900:hover     { color: #f1f5f9; }
+html.dark .hover\:text-gray-700:hover     { color: #cbd5e1; }
+html.dark .hover\:text-gray-600:hover     { color: #94a3b8; }
+
+/* Accent variants */
+html.dark .bg-accent-light                { background-color: rgba(114, 79, 172, 0.25); }
+html.dark .hover\:bg-accent-light:hover   { background-color: rgba(114, 79, 172, 0.35); }
+html.dark .hover\:bg-accent\/5:hover      { background-color: rgba(114, 79, 172, 0.12); }
+html.dark .border-accent\/20              { border-color: rgba(114, 79, 172, 0.3); }
+
+/* Status backgrounds — slightly desaturated in dark mode */
+html.dark .bg-red-50    { background-color: rgba(239, 68, 68, 0.12); }
+html.dark .bg-amber-50  { background-color: rgba(245, 158, 11, 0.12); }
+html.dark .bg-green-50  { background-color: rgba(34, 197, 94, 0.12); }
+html.dark .bg-blue-50   { background-color: rgba(59, 130, 246, 0.12); }
+html.dark .bg-purple-50 { background-color: rgba(168, 85, 247, 0.12); }
+html.dark .bg-fuchsia-50{ background-color: rgba(217, 70, 239, 0.12); }
+
+/* Form inputs */
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html.dark select,
+html.dark textarea {
+  background-color: #1a2540;
+  border-color: #2d3f55;
+  color: #f1f5f9;
+  color-scheme: dark;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #475569; }
+html.dark option { background-color: #1a2540; color: #f1f5f9; }
+
+/* Shadows — more depth on dark bg */
+html.dark .shadow-lg { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); }
+html.dark .shadow-sm { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); }
+
+/* Mapbox popup reset */
+.mapboxgl-popup-content {
+  padding: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+}
+.mapboxgl-popup-tip { display: none !important; }
+ 

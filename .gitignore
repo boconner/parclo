@@ -1,0 +1,8 @@
+# Business documents kept alongside the repo — not part of the product source.
+/*.docx
+/*.pptx
+/*.xlsx
+/*.pdf
+/~$*
+/image.png
+*.tsbuildinfo

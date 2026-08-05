@@ -1,0 +1,479 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AlertType {
+  LOW_STOCK_REP
+  REORDER_SUPPLIER
+  // Store hasn't been visited within InventorySettings.visitOverdueDays.
+  VISIT_OVERDUE
+  // Synced on-shelf count has not changed within noMovementDays while stock is
+  // actually present — the product is sitting there, not selling.
+  NO_MOVEMENT
+}
+
+enum AlertStatus {
+  OPEN
+  RESOLVED
+  SNOOZED
+}
+
+enum RepStatus {
+  active
+  inactive
+}
+
+// Mirrors RepStatus. An inactive store is one we no longer service — closed,
+// dropped the brand, or transferred — but whose history (visits, orders,
+// deployments) must stay on record, so it is never deleted.
+enum StoreStatus {
+  active
+  inactive
+}
+
+enum VisitAction {
+  stocked
+  checked
+  order_placed
+  issue_reported
+}
+
+enum VisitType {
+  visit
+  tasting
+}
+
+enum EventStatus {
+  scheduled
+  completed
+  cancelled
+}
+
+enum EventType {
+  tasting
+  tasking
+  private_event
+}
+
+enum OrderStatus {
+  pending
+  in_transit
+  delivered
+}
+
+model Market {
+  slug        String            @id
+  name        String
+  stores      Store[]
+  reps        Rep[]
+  repMarkets  RepMarket[]
+  deployments FieldDeployment[]
+}
+
+model Chain {
+  id          String            @id
+  name        String
+  stores      Store[]
+  contacts    Contact[]
+  deployments FieldDeployment[]
+  restockRequests RestockRequest[]
+
+  // Chain-level portal, for an HQ buyer who covers many locations. Same
+  // mechanics as Store.portalToken but the request may not name a single store.
+  portalToken         String?   @unique
+  portalTokenIssuedAt DateTime?
+}
+
+enum ProductStatus {
+  active
+  archived
+}
+
+// A sellable SKU. Store-level stock lives in StoreProduct; the Store.onShelf /
+// Store.inProcess columns are aggregates over those rows, maintained on write,
+// so every existing dashboard/report query keeps working unchanged. Brands with
+// a single active product get exactly the pre-Product behavior.
+model Product {
+  id           String        @id @default(cuid())
+  name         String
+  sku          String?
+  sizeLabel    String?       // "750ml", "Case of 6"
+  unitsPerCase Int?
+  status       ProductStatus @default(active)
+  sortOrder    Int           @default(0)
+  storeLevels  StoreProduct[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+// Per-store, per-product stock level. Source of truth for shelf counts; the
+// matching Store columns are recomputed whenever these rows change.
+model StoreProduct {
+  storeId   String
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  onShelf   Int      @default(0)
+  inProcess Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@id([storeId, productId])
+}
+
+model Rep {
+  id          String       @id @default(cuid())
+  name        String
+  email       String       @unique
+  phone       String?
+  allRegions  Boolean      @default(false)
+  clerkUserId String?      @unique
+  marketSlug  String
+  market      Market       @relation(fields: [marketSlug], references: [slug])
+  status      RepStatus    @default(active)
+  repMarkets   RepMarket[]
+  stores       Store[]
+  visits       StoreVisit[]
+  events       EventRep[]
+  deployments  FieldDeployment[]
+  createdAt    DateTime     @default(now())
+}
+
+model Store {
+  id            String         @id @default(cuid())
+  name          String
+  displayName   String?
+  area          String
+  marketSlug    String
+  market        Market         @relation(fields: [marketSlug], references: [slug])
+  chainId       String?
+  chain         Chain?         @relation(fields: [chainId], references: [id])
+  storeNumber   String?
+  repId         String?
+  rep           Rep?           @relation(fields: [repId], references: [id])
+  address       String?
+  latitude      Float?
+  longitude     Float?
+  status        StoreStatus    @default(active)
+  // Set when a store is deactivated, so "when did we drop this?" is answerable.
+  deactivatedAt DateTime?
+  onShelf       Int            @default(0)
+  inProcess     Int            @default(0)
+  daysOfSupply  Float?
+  depletionRate Float?
+  lastVisit     DateTime?
+  alerts        Alert[]
+  visits        StoreVisit[]
+  orders        StoreOrder[]
+  contacts      ContactStore[]
+  events        Event[]
+  deployments   FieldDeployment[]
+  stockSyncs    StockSync[]
+  restockRequests RestockRequest[]
+  products      StoreProduct[]
+
+  // Customer-facing portal. `portalToken` is the secret embedded in the QR code
+  // a rep leaves at the store; it is the ONLY credential for /api/portal, so it
+  // is issued on demand and can be rotated (which invalidates printed codes).
+  portalToken         String?   @unique
+  portalTokenIssuedAt DateTime?
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+// Audit log of automated stock refreshes pulled from a retailer's website API
+// (e.g. Goody Goody). These update Store.onShelf directly and are intentionally
+// NOT recorded as StoreVisits — a sync is a machine reading, not a rep visit.
+model StockSync {
+  id              String   @id @default(cuid())
+  storeId         String
+  store           Store    @relation(fields: [storeId], references: [id])
+  source          String   @default("retailer_api")
+  productSku      String
+  storeNumber     String
+  stockStatus     String
+  onShelf         Int
+  previousOnShelf Int
+  syncedAt        DateTime @default(now())
+
+  @@index([storeId, syncedAt])
+}
+
+model Contact {
+  id        String         @id @default(cuid())
+  name      String
+  role      String?
+  phone     String?
+  email     String?
+  chainId   String?
+  chain     Chain?         @relation(fields: [chainId], references: [id])
+  notes     String?
+  stores    ContactStore[]
+  visits    StoreVisit[]
+  events    Event[]
+  createdAt DateTime       @default(now())
+}
+
+model ContactStore {
+  contactId String
+  contact   Contact @relation(fields: [contactId], references: [id])
+  storeId   String
+  store     Store   @relation(fields: [storeId], references: [id])
+
+  @@id([contactId, storeId])
+}
+
+model Alert {
+  id          String      @id @default(cuid())
+  type        AlertType
+  status      AlertStatus @default(OPEN)
+  message     String
+  storeId     String?
+  store       Store?      @relation(fields: [storeId], references: [id])
+  triggeredAt DateTime    @default(now())
+  resolvedAt  DateTime?
+}
+
+model StoreVisit {
+  id              String       @id @default(cuid())
+  storeId         String
+  store           Store        @relation(fields: [storeId], references: [id])
+  repId           String
+  rep             Rep          @relation(fields: [repId], references: [id])
+  visitType       VisitType    @default(visit)
+  logType         String?
+  visitedAt       DateTime?
+  onShelf         Int
+  action          VisitAction?
+  bottlesSold     Int?
+  notes           String?
+  takeaways       String?
+  accomplishments String?
+  hoursWorked     Float?
+  contactId       String?
+  contact         Contact?     @relation(fields: [contactId], references: [id])
+  eventId         String?      @unique
+  event           Event?       @relation(fields: [eventId], references: [id])
+  createdAt       DateTime     @default(now())
+}
+
+model Event {
+  id               String      @id @default(cuid())
+  type             EventType   @default(tasting)
+  title            String?
+  storeId          String?
+  store            Store?      @relation(fields: [storeId], references: [id])
+  address          String?
+  bottlesSold      Int?
+  scheduledAt      DateTime
+  endTime          DateTime?
+  status           EventStatus @default(scheduled)
+  notes            String?
+  completionNotes  String?
+  takeaways        String?
+  accomplishments  String?
+  hoursWorked      Float?
+  closedByRepId    String?
+  closedByName     String?
+  contactId        String?
+  contact          Contact?    @relation(fields: [contactId], references: [id])
+  visit            StoreVisit?
+  reps             EventRep[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model EventRep {
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id])
+  repId   String
+  rep     Rep    @relation(fields: [repId], references: [id])
+
+  @@id([eventId, repId])
+}
+
+model RepMarket {
+  repId      String
+  rep        Rep    @relation(fields: [repId], references: [id], onDelete: Cascade)
+  marketSlug String
+  market     Market @relation(fields: [marketSlug], references: [slug])
+
+  @@id([repId, marketSlug])
+}
+
+model StoreOrder {
+  id         String      @id @default(cuid())
+  storeId    String
+  store      Store       @relation(fields: [storeId], references: [id])
+  placedAt   DateTime    @default(now())
+  quantity   Int
+  status     OrderStatus @default(pending)
+  invoiceRef String
+}
+
+enum SupplierOrderStatus {
+  pending
+  in_transit
+  delivered
+}
+
+model SupplierOrder {
+  id         String              @id @default(cuid())
+  poNumber   String
+  product    String
+  supplier   String              @default("")
+  quantity   Int
+  notes      String?
+  status     SupplierOrderStatus @default(pending)
+  orderedAt  DateTime            @default(now())
+  expectedAt DateTime
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+}
+
+enum SupplyRequestStatus {
+  pending
+  fulfilled
+}
+
+// ─── Customer-facing store portal ────────────────────────────────────────────
+// A RestockRequest is submitted by retail staff via the QR portal, NOT by a rep.
+// It is deliberately a *signal*, not an order: under TX three-tier the brand
+// cannot sell to a retailer directly, so we capture how low they are and what
+// POS material they want, then route it to the owning rep. Kept in its own table
+// (rather than folded into SupplyRequest) because these rows are unauthenticated
+// public input and must never be confused with internal rep requests.
+
+// The portal asks this as three faces: 🙂 well_stocked, 😐 getting_low,
+// ☹️ out_of_stock. `almost_out` is retained because existing rows use it — the
+// form no longer offers it, but dropping the value would orphan that history.
+enum StockLevel {
+  well_stocked
+  getting_low
+  almost_out
+  out_of_stock
+}
+
+enum RestockRequestStatus {
+  new_request
+  acknowledged
+  resolved
+}
+
+// Which QR code the request came from. Not derivable after the fact: a chain-code
+// submission where the buyer picked a location looks identical to a store-code
+// submission once stored.
+enum RequestSource {
+  store_qr
+  chain_qr
+}
+
+model RestockRequest {
+  id            String               @id @default(cuid())
+  source        RequestSource        @default(store_qr)
+  // Null for a chain-wide request where HQ did not name a single location.
+  storeId       String?
+  store         Store?               @relation(fields: [storeId], references: [id])
+  // Always set: denormalized from the store for store-code submissions, so the
+  // queue can filter by chain without a join through a nullable store.
+  chainId       String?
+  chain         Chain?               @relation(fields: [chainId], references: [id])
+  stockLevel    StockLevel
+  bottlesLeft   Int?
+  // How many cases the store is asking for. Still a request routed through the
+  // distributor, not an order the brand can fulfil directly.
+  casesRequested Int?
+  // JSON array of POS material slugs, e.g. ["shelf_talkers","menus"]
+  materials     String               @default("[]")
+  wantsRepVisit Boolean              @default(false)
+  note          String?
+  submitterName String?
+  // Used to send the requester their own copy of the submission.
+  submitterEmail String?
+  submitterRole String?
+  status        RestockRequestStatus @default(new_request)
+  // Alert raised for this request, so resolving one can resolve the other
+  alertId       String?
+  // Retained for abuse triage only
+  submittedIp   String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  @@index([storeId, createdAt])
+  @@index([chainId, createdAt])
+  @@index([status])
+}
+
+model InventorySettings {
+  id               String   @id @default("default")
+  reorderLeadWeeks Int      @default(12)
+  bufferWeeks      Int      @default(8)
+  // Thresholds for the stale-store alert job.
+  visitOverdueDays Int      @default(21)
+  noMovementDays   Int      @default(14)
+  updatedAt        DateTime @updatedAt
+}
+
+model ProductionRun {
+  id         String   @id @default(cuid())
+  quantity   Int
+  receivedAt DateTime @default(now())
+  notes      String?
+  createdAt  DateTime @default(now())
+}
+
+model WarehouseTransfer {
+  id           String   @id @default(cuid())
+  quantity     Int
+  notes        String?
+  transferredAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+}
+
+model FieldDeployment {
+  id         String   @id @default(cuid())
+  quantity   Int
+  marketSlug String?
+  market     Market?  @relation(fields: [marketSlug], references: [slug])
+  chainId    String?
+  chain      Chain?   @relation(fields: [chainId], references: [id])
+  storeId    String?
+  store      Store?   @relation(fields: [storeId], references: [id])
+  repId      String?
+  rep        Rep?     @relation(fields: [repId], references: [id])
+  deployedAt DateTime @default(now())
+  notes      String?
+  createdAt  DateTime @default(now())
+}
+
+model SalesEntry {
+  id        String   @id @default(cuid())
+  quantity  Int
+  notes     String?
+  soldAt    DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model SupplyRequest {
+  id          String              @id @default(cuid())
+  eventId     String?
+  eventType   String?
+  eventDate   DateTime?
+  eventTitle  String?
+  storeName   String?
+  repName     String
+  repEmail    String?
+  repPhone    String?
+  needByDate  DateTime?
+  items       String
+  urgency     String              @default("normal")
+  notes       String?
+  status      SupplyRequestStatus @default(pending)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}

@@ -1,0 +1,45 @@
+{
+  "name": "stackline-frontend",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@clerk/clerk-react": "^5.61.6",
+    "@tanstack/react-query": "^5.45.0",
+    "@tanstack/react-query-devtools": "^5.45.0",
+    "@types/react-big-calendar": "^1.16.3",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.7",
+    "mapbox-gl": "^3.22.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^18.3.1",
+    "react-big-calendar": "^1.19.4",
+    "react-dom": "^18.3.1",
+    "react-map-gl": "^8.1.1",
+    "react-router-dom": "^6.24.0",
+    "recharts": "^2.12.0",
+    "vite-plugin-pwa": "^1.2.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1",
+    "vitest": "^4.1.9"
+  }
+}

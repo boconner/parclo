@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'Fix Render build: explicit prisma generate + use db push for schema sync *)",
+      "Bash(git push *)",
+      "Bash(git commit -m 'Run prisma generate in start command \\(build artifacts don'\\\\''t persist to runtime\\) *)",
+      "Bash(git commit -m ' *)",
+      "Bash(DATABASE_URL=\"postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db\" npx prisma db push)",
+      "Bash(DATABASE_URL=\"postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db\" ./node_modules/.bin/prisma db push)",
+      "Bash(npm install *)",
+      "Bash(DATABASE_URL=\"postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db\" npm run seed)",
+      "Read(//c/Users/ofure/**)",
+      "Bash(xargs cat *)",
+      "Bash(nslookup *)",
+      "Bash(git commit *)",
+      "Bash(npx prisma *)",
+      "Bash(git *)",
+      "Bash(DATABASE_URL=\"postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db\" npx prisma migrate dev --name add-clerk-user-id-to-rep)",
+      "Bash(DATABASE_URL=\"postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db\" npx prisma migrate dev --name add-clerk-user-id-to-rep --create-only)",
+      "Bash(DATABASE_URL=\"postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db\" npx prisma db push --accept-data-loss)",
+      "PowerShell(cd C:\\\\Users\\\\ofure\\\\contento\\\\backend; $env:DATABASE_URL=\"postgres://postgres:postgres@localhost:51214/template1?sslmode=disable\"; npx prisma migrate dev --name add-tasting-end-time 2>&1)",
+      "PowerShell(Get-ChildItem C:\\\\Users\\\\ofure\\\\contento -Name | Where-Object { $_ -notmatch \"node_modules\" })",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\ofure\\\\contento\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(copy goody_goody_may_2026_demo_template.xlsx goody_goody_may_2026_demo_template.zip)",
+      "Bash(powershell -Command \"Expand-Archive -Path 'goody_goody_may_2026_demo_template.zip' -DestinationPath 'xlsx_tmp' -Force\")",
+      "Bash(powershell -Command \"Get-ChildItem xlsx_tmp\\\\\\\\xl\\\\\\\\worksheets\")",
+      "Bash(unzip -o \"C:/Users/ofure/contento/docs/template.zip\" -d \"C:/Users/ofure/contento/docs/xlsx_tmp\")",
+      "Bash(DATABASE_URL=\"postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db\" npx tsx src/geocode-goody-goody.ts)",
+      "Bash(DATABASE_URL=postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db node -e ' *)",
+      "Bash(DATABASE_URL=\"postgresql://contento_db_user:b1pWtuwwxvVB4N5IeoXLb2JBwaxX3BvD@dpg-d7p5uc77f7vs73eo8gr0-a.oregon-postgres.render.com/contento_db\" npx tsx src/fix-colleyville2.ts)",
+      "Bash(xargs grep -l \"LineChart\\\\|BarChart\")",
+      "Bash(xargs grep -l \"[Oo]rders\")",
+      "PowerShell(git *)"
+    ]
+  }
+}

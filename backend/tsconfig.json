@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    // Environment: Node ESM (package.json "type": "module"), run via tsx
+    "module": "nodenext",
+    "target": "esnext",
+    "lib": ["esnext"],
+    "types": ["node"],
+
+    // Type-check only — tsx handles execution, nothing is emitted
+    "noEmit": true,
+
+    // Strictness
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}
