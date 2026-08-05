@@ -16,8 +16,23 @@ const inDays = (n: number, hour = 17) => {
   return t
 }
 
+/** Host and database name of the target, with credentials stripped. */
+function targetDescription(): string {
+  const url = process.env.DATABASE_URL
+  if (!url) return 'UNKNOWN (DATABASE_URL is not set)'
+  try {
+    const u = new URL(url)
+    return `${u.host}${u.pathname}`
+  } catch {
+    return 'UNKNOWN (DATABASE_URL is not a valid URL)'
+  }
+}
+
 async function main() {
-  console.log('Seeding database...')
+  // This script writes demo data. Say out loud where it is about to write, so a
+  // stale DATABASE_URL in .env can't quietly load fake stores into a real
+  // customer's database.
+  console.log(`Seeding ${targetDescription()} ...`)
 
   // ── Markets ───────────────────────────────────────────────────────────────
   await prisma.market.createMany({
