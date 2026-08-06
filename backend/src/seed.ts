@@ -199,11 +199,36 @@ async function main() {
         onShelf:   Math.max(0, s.onShelf + bump),
         action:    VISIT_ACTIONS[(n + i) % VISIT_ACTIONS.length],
         notes:     VISIT_NOTES[(n + i) % VISIT_NOTES.length],
+        // Depletion since the previous visit — this is what the dashboard's
+        // Weekly Depletion chart is built from, so every visit records one.
+        bottlesSold: 3 + ((n * 3 + i * 5) % 9),
         visitedAt: new Date(s.lastVisit!.getTime() - i * (6 + (n % 3)) * 86_400_000 + hours * 3_600_000),
       }
     })
   })
   await prisma.storeVisit.createMany({ data: visitRows, skipDuplicates: true })
+
+  // ── Store orders ──────────────────────────────────────────────────────────
+  // Cases placed over the past two months. Pairs with visit depletion on the
+  // Weekly Depletion chart (sold vs. ordered) and fills Order History tabs.
+  const orderStores = seededVisitStores.filter((_, i) => i % 2 === 0)
+  await prisma.storeOrder.createMany({
+    data: orderStores.flatMap((s, idx) => {
+      const n = Number(s.id)
+      return [0, 1, 2].map(k => {
+        const daysBack = 5 + k * 17 + (n % 6)
+        return {
+          id:         `o${s.id}-${k}`,
+          storeId:    s.id,
+          quantity:   6 * (1 + ((n + k) % 3)),
+          placedAt:   inDays(-daysBack, 15),
+          status:     (k === 0 ? 'pending' : k === 1 ? 'in_transit' : 'delivered') as 'pending' | 'in_transit' | 'delivered',
+          invoiceRef: `SO-${1200 + idx * 3 + k}`,
+        }
+      })
+    }),
+    skipDuplicates: true,
+  })
 
   // ── Events ────────────────────────────────────────────────────────────────
   // Two tastings on the calendar, two recently completed with results.
