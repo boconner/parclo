@@ -427,6 +427,10 @@ model OrgSettings {
   // lightweight customer sees a lightweight app.
   featureEvents   Boolean @default(true)  // tastings/events calendar
   featurePipeline Boolean @default(true)  // production→warehouse→field inventory ledger
+  // Set the first time branding is saved. Recorded explicitly because the
+  // values themselves can't say whether they were chosen: a customer may
+  // legitimately keep the default name or accent.
+  brandingSavedAt DateTime?
   updatedAt    DateTime @updatedAt
 }
 

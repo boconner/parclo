@@ -45,6 +45,7 @@ router.patch('/', async (req, res) => {
         ...(appUrl       !== undefined ? { appUrl: trimOrNull(appUrl) }       : {}),
         ...(featureEvents   !== undefined ? { featureEvents:   Boolean(featureEvents) }   : {}),
         ...(featurePipeline !== undefined ? { featurePipeline: Boolean(featurePipeline) } : {}),
+        brandingSavedAt: new Date(),
       },
     })
     res.json({
@@ -68,15 +69,16 @@ router.patch('/', async (req, res) => {
 // arrives (UI, CSV import, or API).
 router.get('/setup-status', async (_req, res) => {
   try {
+    await getOrgSettings() // ensures the singleton row exists
     const [settings, productCount, storeCount, repCount, qrIssuedCount] = await Promise.all([
-      getOrgSettings(),
+      prisma.orgSettings.findUnique({ where: { id: 'default' }, select: { brandingSavedAt: true } }),
       prisma.product.count({ where: { status: 'active' } }),
       prisma.store.count(),
       prisma.rep.count(),
       prisma.store.count({ where: { portalToken: { not: null } } }),
     ])
 
-    const brandingConfigured = settings.brandName !== 'Parclo' || settings.logoUrl !== null
+    const brandingConfigured = settings?.brandingSavedAt != null
     res.json({
       brandingConfigured,
       productCount,
